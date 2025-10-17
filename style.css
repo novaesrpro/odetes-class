@@ -133,7 +133,7 @@ html, body {
 .chat-input-area {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 8px 10px;
     border-top: 1px solid var(--border-color);
     gap: 8px;
     background-color: var(--bg-main);
