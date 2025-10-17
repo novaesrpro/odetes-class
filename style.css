@@ -74,6 +74,15 @@ html, body {
 }
 .sidebar-section:last-child { border-bottom: none; }
 
+.sidebar-section h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary-dark-theme);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 24px;   /* Aumenta o espaço acima do título */
+    margin-bottom: 16px; /* Aumenta o espaço abaixo do título */
+}
 
 /* --- Overlay (Fundo Escuro) --- */
 .overlay {
@@ -179,7 +188,9 @@ select:focus, input:focus, textarea:focus { outline: none; border-color: var(--a
 #suggested-scenarios-list li:hover { background-color: #3c4656; border-color: var(--accent-color); color: #ffffff; }
 #suggested-scenarios-list li.active-scenario { background-color: var(--accent-color); border-color: var(--accent-color); color: var(--user-message-text); font-weight: 600; }
 button#start-custom-scenario-btn { width: 100%; background-color: var(--accent-color); color: white; border: none; font-weight: 600; font-size: 0.95rem; padding: 14px; border-radius: 10px; margin-top: 16px; cursor: pointer; transition: background-color 0.2s ease; }
-
+#suggested-scenarios-list {
+    margin-bottom: 28px; /* Aumenta o espaço abaixo da lista de cenários */
+}
 
 /* ===== MEDIA QUERY PARA DESKTOP ===== */
 @media (min-width: 800px) {
