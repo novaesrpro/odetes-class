@@ -9,11 +9,9 @@
 <body>
 
     <!-- O MENU LATERAL AGORA FICA FORA DO CONTAINER PRINCIPAL -->
-    <!-- Ele será controlado por JavaScript para aparecer e desaparecer -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h2>Menu</h2>
-            <!-- Botão para fechar o menu, mais útil em mobile -->
             <button class="icon-btn" id="close-menu-btn">&times;</button>
         </div>
         
@@ -47,8 +45,8 @@
                         <option value="high">Alto</option>
                     </select>
 
-                    <label for="api-key-input">Sua Chave de API (Groq)</label>
-                    <input type="password" id="api-key-input" placeholder="Insira sua chave aqui">
+                    <label>Conexão com a IA</label>
+                    <button id="change-api-key-btn">Gerenciar Chave de API</button>
                 </div>
             </section>
 
@@ -97,7 +95,6 @@
     <div class="app-container">
         <main class="chat-area">
             
-            <!-- CABEÇALHO FIXO PARA A VISUALIZAÇÃO MOBILE -->
             <header class="chat-header">
                 <button class="icon-btn" id="menu-toggle-btn">☰</button>
                 <h1>Odete's English Class</h1>
@@ -132,6 +129,29 @@
         </div>
     </div>
     
+    <!-- ===== ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
+    <div id="api-key-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurar Chave de API (Groq)</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Para usar o aplicativo, você precisa de uma chave de API da Groq. É grátis para obter e usar.</p>
+                
+                <!-- LINK ADICIONADO ABAIXO -->
+                <p class="modal-link-text">
+                    <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Não tem uma chave? Obtenha uma aqui.</a>
+                </p>
+                <!-- FIM DO LINK ADICIONADO -->
+
+                <label for="modal-api-key-input">Sua Chave de API</label>
+                <input type="password" id="modal-api-key-input" placeholder="gsk_...">
+                <button id="save-api-key-btn">Salvar e Começar</button>
+                <p class="modal-info-text">Sua chave é salva apenas no seu navegador.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- OVERLAY PARA ESCURECER O FUNDO QUANDO O MENU ESTIVER ABERTO -->
     <div id="overlay" class="overlay-hidden"></div>
 

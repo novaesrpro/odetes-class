@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatWindow = document.getElementById('chat-window');
     const textInput = document.getElementById('text-input');
     const sendBtn = document.getElementById('send-btn');
-    const apiKeyInput = document.getElementById('api-key-input');
     const proficiencySelect = document.getElementById('proficiency-select');
     const correctionSelect = document.getElementById('correction-select');
     const languageSelect = document.getElementById('language-select');
@@ -17,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCloseBtn = document.getElementById('modal-close-btn');
     const feedbackContent = document.getElementById('feedback-content');
     const translateBtn = document.getElementById('translate-btn');
+
+    // Elementos do Modal de Chave de API (NOVO)
+    const apiKeyModal = document.getElementById('api-key-modal');
+    const modalApiKeyInput = document.getElementById('modal-api-key-input');
+    const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+    const changeApiKeyBtn = document.getElementById('change-api-key-btn');
 
     // Elementos do Menu Mobile
     const sidebar = document.getElementById('sidebar');
@@ -34,37 +39,77 @@ document.addEventListener('DOMContentLoaded', () => {
     let translatedFeedback = '';
     let isTranslated = false;
 
+    // --- Funções de Gerenciamento da API Key (NOVO) ---
+    const getApiKey = () => localStorage.getItem('groqApiKey');
+
+    function openApiKeyModal(isPersistent = false) {
+        if (isPersistent) {
+            apiKeyModal.classList.add('modal-persistent');
+        } else {
+            apiKeyModal.classList.remove('modal-persistent');
+        }
+        apiKeyModal.classList.remove('modal-hidden');
+    }
+
+    const closeApiKeyModal = () => apiKeyModal.classList.add('modal-hidden');
+
+    function saveApiKey() {
+        const key = modalApiKeyInput.value.trim();
+        if (key) {
+            localStorage.setItem('groqApiKey', key);
+            closeApiKeyModal();
+            if (!currentScenario) {
+                 displayMessage("Chave de API salva! Agora selecione um cenário para começar.", 'system');
+            }
+        } else {
+            alert("Por favor, insira uma chave de API válida.");
+        }
+    }
+    
     // --- Event Listeners ---
     sendBtn.addEventListener('click', handleSendMessage);
     textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } });
     suggestedScenariosList.addEventListener('click', (e) => { if (e.target.tagName === 'LI') { const key = e.target.textContent, lang = languageSelect.value, scenario = SCENARIOS[key]?.[lang]; if (scenario) startNewConversation(scenario, e.target); else alert(`Cenário não disponível.`); } });
     startCustomScenarioBtn.addEventListener('click', () => { const goal = customScenarioInput.value.trim(); if (goal) startNewConversation({ name: "Custom Scenario", goal }); });
     
-    // Listeners do Modal
-    modalCloseBtn.addEventListener('click', closeModal);
-    feedbackModal.addEventListener('click', (e) => { if (e.target === feedbackModal) closeModal(); });
+    // Listeners do Modal de Feedback
+    modalCloseBtn.addEventListener('click', () => feedbackModal.classList.add('modal-hidden'));
+    feedbackModal.addEventListener('click', (e) => { if (e.target === feedbackModal) feedbackModal.classList.add('modal-hidden'); });
     translateBtn.addEventListener('click', handleTranslateFeedback);
+
+    // Listeners do Modal de API Key (NOVO)
+    saveApiKeyBtn.addEventListener('click', saveApiKey);
+    changeApiKeyBtn.addEventListener('click', () => openApiKeyModal(false));
+    apiKeyModal.addEventListener('click', (e) => {
+        if (!apiKeyModal.classList.contains('modal-persistent') && e.target === apiKeyModal) {
+            closeApiKeyModal();
+        }
+    });
     
     // Listeners do Menu Mobile
     menuToggleBtn.addEventListener('click', openSidebar);
     closeMenuBtn.addEventListener('click', closeSidebar);
     overlay.addEventListener('click', closeSidebar);
 
-    // Listener para as seções retráteis do menu
     document.querySelectorAll('.section-header').forEach(header => {
         header.addEventListener('click', () => header.parentElement.classList.toggle('collapsed'));
     });
 
     // --- Funções de Lógica Principal ---
     async function startNewConversation(scenario, element = null) {
-        closeSidebar(); // Fecha o menu para o usuário ver o chat
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            openApiKeyModal(true);
+            return;
+        }
+
+        closeSidebar();
         currentScenario = scenario;
         chatWindow.innerHTML = '';
         conversationHistory = [];
         updateActiveScenario(element);
         displayMessage(`🎯 Your Goal: ${scenario.goal}`, 'system');
-        const apiKey = apiKeyInput.value.trim();
-        if (!apiKey) { displayMessage("Please enter your API key to start.", 'ai'); return; }
+        
         setLoadingState(true, true);
         try {
             const settings = { language: languageSelect.value, proficiency: proficiencySelect.value, correction: correctionSelect.value };
@@ -75,11 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleSendMessage() {
+        const apiKey = getApiKey();
+        if (!apiKey) {
+            openApiKeyModal(true);
+            return;
+        }
         if (!currentScenario) { displayMessage("Please select a scenario.", 'ai'); return; }
+
         const messageText = textInput.value.trim();
         if (!messageText) return;
-        const apiKey = apiKeyInput.value.trim();
-        if (!apiKey) { displayMessage("Please enter your API key.", 'ai'); return; }
+        
         displayMessage(messageText, 'user');
         conversationHistory.push({ role: 'user', content: messageText });
         textInput.value = '';
@@ -116,12 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function handleGetFeedback() {
-        openModal();
+        feedbackModal.classList.remove('modal-hidden');
         feedbackContent.innerHTML = '<p>Analyzing your conversation, please wait...</p>';
         translateBtn.classList.add('translate-btn-hidden');
         try {
-            const apiKey = apiKeyInput.value.trim();
-            if (!apiKey) throw new Error("API Key is missing.");
+            const apiKey = getApiKey();
+            if (!apiKey) throw new Error("API Key is missing. Please configure it in the menu.");
             originalFeedback = await getFeedbackForConversation(conversationHistory, apiKey);
             displayFormattedFeedback(originalFeedback);
             translateBtn.classList.remove('translate-btn-hidden');
@@ -140,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackContent.innerHTML = '<p>Translating, please wait...</p>';
             try {
                 if (!translatedFeedback) {
-                    const apiKey = apiKeyInput.value.trim();
+                    const apiKey = getApiKey();
+                    if (!apiKey) throw new Error("API Key is missing.");
                     const protectedSnippets = [];
                     const textToTranslate = originalFeedback.replace(/\*\*(.*?)\*\*/g, (match) => {
                         protectedSnippets.push(match);
@@ -168,9 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackContent.innerHTML = formatted;
     }
 
-    function openModal() { feedbackModal.classList.remove('modal-hidden'); }
-    function closeModal() { feedbackModal.classList.add('modal-hidden'); translatedFeedback = ''; }
-
     // --- Funções de Controle da UI (Menu Mobile) ---
     function openSidebar() {
         sidebar.classList.add('sidebar-open');
@@ -189,4 +237,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function setLoadingState(isLoading, isInputEnabled = false) { textInput.disabled = isLoading || !isInputEnabled; sendBtn.disabled = isLoading || !isInputEnabled; if (isLoading) showTypingIndicator(); else { removeTypingIndicator(); if (isInputEnabled) textInput.focus(); } }
     function showTypingIndicator() { if (!document.getElementById('typing-indicator')) { const el = document.createElement('div'); el.id = 'typing-indicator'; el.classList.add('message', 'ai-message'); el.innerHTML = '<p class="typing-dots"><span>.</span><span>.</span><span>.</span></p>'; chatWindow.appendChild(el); scrollToBottom(); } }
     function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
+
+    // --- Inicialização da Aplicação ---
+    function initializeApp() {
+        if (!getApiKey()) {
+            openApiKeyModal(true); // Abre o modal em modo persistente se não houver chave
+        }
+    }
+
+    initializeApp();
 });

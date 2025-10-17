@@ -41,18 +41,18 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 300px; /* Mais estreito para mobile */
+    width: 300px;
     height: 100%;
     background-color: var(--bg-sidebar);
     z-index: 2000;
     display: flex;
     flex-direction: column;
     color: var(--text-primary-dark-theme);
-    transform: translateX(-100%); /* Começa fora da tela */
+    transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
 }
 .sidebar.sidebar-open {
-    transform: translateX(0); /* Entra na tela */
+    transform: translateX(0);
     box-shadow: 5px 0 25px rgba(0,0,0,0.2);
 }
 .sidebar-header {
@@ -80,8 +80,8 @@ html, body {
     color: var(--text-secondary-dark-theme);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-top: 24px;   /* Aumenta o espaço acima do título */
-    margin-bottom: 16px; /* Aumenta o espaço abaixo do título */
+    margin-top: 24px;
+    margin-bottom: 16px;
 }
 
 /* --- Overlay (Fundo Escuro) --- */
@@ -147,7 +147,7 @@ html, body {
 .icon-btn:hover { background-color: var(--hover-light); color: var(--accent-color); }
 
 
-/* --- Estilos dos Componentes (maioria inalterada) --- */
+/* --- Estilos dos Componentes --- */
 .message { padding: 12px 18px; border-radius: 18px; max-width: 80%; line-height: 1.5; font-size: 0.95rem; }
 .system-message { align-self: center; max-width: 90%; background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; border-radius: 12px; font-style: italic; font-size: 0.9rem; text-align: center; }
 .ai-message { background-color: var(--ai-message-bg); color: var(--ai-message-text); align-self: flex-start; border-bottom-left-radius: 5px; }
@@ -156,13 +156,13 @@ html, body {
 #feedback-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5); }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 3000; opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0.3s ease; }
 .modal-hidden { opacity: 0; visibility: hidden; }
-.modal-content { background-color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); width: 90%; max-width: 650px; transform: scale(1); transition: transform 0.3s ease; }
+.modal-content { background-color: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px; transform: scale(1); transition: transform 0.3s ease; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 16px; gap: 16px; }
 .modal-header h2 { font-size: 1.2rem; }
 #translate-btn { background-color: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 600; white-space: nowrap; transition: all 0.2s ease; }
 #translate-btn:hover { background-color: var(--accent-color); color: white; }
 .translate-btn-hidden { display: none; }
-.modal-close { font-size: 2rem; }
+.modal-close { font-size: 2rem; cursor: pointer; }
 .modal-body { max-height: 70vh; overflow-y: auto; line-height: 1.7; padding-right: 10px; }
 .modal-body h3 { margin-top: 20px; margin-bottom: 12px; color: var(--accent-color); border-bottom: 2px solid var(--hover-light); padding-bottom: 5px; }
 .feedback-item { position: relative; padding-left: 25px; margin-bottom: 12px; }
@@ -172,7 +172,7 @@ html, body {
 .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
-/* --- Estilos do Conteúdo do Menu (inalterado) --- */
+/* --- Estilos do Conteúdo do Menu --- */
 .section-header > div { display: flex; align-items: center; gap: 12px; }
 .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 20px 0; }
 .header-icon { font-size: 1.2rem; opacity: 0.8; }
@@ -189,56 +189,65 @@ select:focus, input:focus, textarea:focus { outline: none; border-color: var(--a
 #suggested-scenarios-list li:hover { background-color: #3c4656; border-color: var(--accent-color); color: #ffffff; }
 #suggested-scenarios-list li.active-scenario { background-color: var(--accent-color); border-color: var(--accent-color); color: var(--user-message-text); font-weight: 600; }
 button#start-custom-scenario-btn { width: 100%; background-color: var(--accent-color); color: white; border: none; font-weight: 600; font-size: 0.95rem; padding: 14px; border-radius: 10px; margin-top: 16px; cursor: pointer; transition: background-color 0.2s ease; }
-#suggested-scenarios-list {
-    margin-bottom: 28px; /* Aumenta o espaço abaixo da lista de cenários */
+#suggested-scenarios-list { margin-bottom: 28px; }
+
+/* Botão para Gerenciar a API Key */
+button#change-api-key-btn {
+    width: 100%;
+    background-color: transparent;
+    color: var(--text-secondary-dark-theme);
+    border: 1px solid var(--border-sidebar);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
+button#change-api-key-btn:hover {
+    background-color: var(--bg-sidebar-light);
+    border-color: var(--accent-color);
+    color: var(--text-primary-dark-theme);
+}
+
+/* Estilos para o Modal da API Key */
+#api-key-modal .modal-content { max-width: 450px; }
+#api-key-modal .modal-description { margin-bottom: 16px; line-height: 1.6; color: var(--secondary-text); font-size: 0.95rem; }
+#api-key-modal label { color: var(--primary-text); }
+#api-key-modal input[type="password"] { background-color: var(--bg-main); color: var(--primary-text); border-color: var(--border-color); margin-bottom: 16px; }
+#api-key-modal button { width: 100%; background-color: var(--accent-color); color: white; border: none; font-weight: 600; font-size: 1rem; padding: 14px; border-radius: 10px; cursor: pointer; transition: background-color 0.2s ease; }
+#api-key-modal button:hover { background-color: #0052cc; }
+#api-key-modal .modal-info-text { font-size: 0.8rem; text-align: center; margin-top: 12px; color: var(--secondary-text); }
+
+/* ESTILOS PARA O LINK NO MODAL (NOVO) */
+.modal-link-text {
+    text-align: center;
+    margin: -8px 0 16px 0;
+    font-size: 0.9rem;
+}
+.modal-link-text a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: text-decoration 0.2s ease;
+}
+.modal-link-text a:hover {
+    text-decoration: underline;
+}
+/* FIM DOS NOVOS ESTILOS */
+
 
 /* ===== MEDIA QUERY PARA DESKTOP ===== */
 @media (min-width: 800px) {
-    /* Restaura o layout de duas colunas */
-    .app-container {
-        display: flex;
-    }
-
-    /* Esconde os controles mobile */
-    .chat-header {
-        display: none;
-    }
-    #close-menu-btn {
-        display: none;
-    }
-
-    /* Restaura o menu lateral fixo */
-    .sidebar {
-        position: static; /* Tira o menu do fluxo fixo */
-        width: 360px;
-        transform: translateX(0); /* Garante que está visível */
-        transition: none;
-        box-shadow: 4px 0px 40px rgba(43, 52, 69, 0.1);
-    }
-
-    .sidebar-header {
-        display: block; /* Volta ao header original */
-        padding: 28px 32px;
-    }
-    .sidebar-header h1 { /* Traz o H1 de volta para o menu */
-        display: block;
-        font-size: 1.6rem;
-        font-weight: 700;
-        text-align: left;
-    }
-    .sidebar-header h2 { display: none; } /* Esconde o h2 "Menu" */
-
-    .sidebar-content {
-        padding: 16px 32px;
-    }
-
-    .chat-window {
-        padding: 24px;
-    }
-
-    .chat-input-area {
-        padding: 16px 24px;
-        gap: 12px;
-    }
+    .app-container { display: flex; }
+    .chat-header { display: none; }
+    #close-menu-btn { display: none; }
+    .sidebar { position: static; width: 360px; transform: translateX(0); transition: none; box-shadow: 4px 0px 40px rgba(43, 52, 69, 0.1); }
+    .sidebar-header { display: block; padding: 28px 32px; }
+    .sidebar-header h1 { display: block; font-size: 1.6rem; font-weight: 700; text-align: left; }
+    .sidebar-header h2 { display: none; }
+    .sidebar-content { padding: 16px 32px; }
+    .chat-window { padding: 24px; }
+    .chat-input-area { padding: 16px 24px; gap: 12px; }
 }
