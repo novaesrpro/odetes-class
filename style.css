@@ -202,7 +202,7 @@ button#start-custom-scenario-btn { width: 100%; background-color: var(--accent-c
 
     /* Esconde os controles mobile */
     .chat-header {
-        display: none;
+        /*display: none;*/
     }
     #close-menu-btn {
         display: none;
