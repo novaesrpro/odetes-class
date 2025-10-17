@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Funções de Lógica Principal ---
     async function startNewConversation(scenario, element = null) {
-        //closeSidebar(); // Fecha o menu para o usuário ver o chat
+        closeSidebar(); // Fecha o menu para o usuário ver o chat
         currentScenario = scenario;
         chatWindow.innerHTML = '';
         conversationHistory = [];
