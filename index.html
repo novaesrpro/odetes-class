@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odete's English Class</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- O MENU LATERAL AGORA FICA FORA DO CONTAINER PRINCIPAL -->
+    <!-- Ele será controlado por JavaScript para aparecer e desaparecer -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <!-- Botão para fechar o menu, mais útil em mobile -->
+            <button class="icon-btn" id="close-menu-btn">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <!-- Seção de Configurações -->
+            <section id="config-section" class="sidebar-section collapsible collapsed">
+                <h2 class="section-header">
+                    <div>
+                        <span class="header-icon">⚙️</span>
+                        <span>Configurações</span>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="section-content">
+                    <label for="language-select">Idioma</label>
+                    <select id="language-select" name="language">
+                        <option value="en-US">Inglês</option>
+                    </select>
+                    
+                    <label for="proficiency-select">Nível de Proficiência</label>
+                    <select id="proficiency-select" name="proficiency">
+                        <option value="basic">Básico</option>
+                        <option value="intermediate">Intermediário</option>
+                        <option value="advanced">Avançado</option>
+                    </select>
+
+                    <label for="correction-select">Nível de Correção</label>
+                    <select id="correction-select" name="correction">
+                        <option value="low">Baixo</option>
+                        <option value="medium">Médio</option>
+                        <option value="high">Alto</option>
+                    </select>
+
+                    <label for="api-key-input">Sua Chave de API (Groq)</label>
+                    <input type="password" id="api-key-input" placeholder="Insira sua chave aqui">
+                </div>
+            </section>
+
+            <!-- Seção de Cenários -->
+            <section id="scenario-section" class="sidebar-section collapsible">
+                <h2 class="section-header">
+                    <div>
+                        <span class="header-icon">💬</span>
+                        <span>Cenários</span>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="section-content">
+                    <h3>Sugeridos</h3>
+                    <ul id="suggested-scenarios-list">
+                        <li>Pedindo um café</li>
+                        <li>Check-in no hotel</li>
+                        <li>Comprando um ingresso de trem</li>
+                    </ul>
+
+                    <h3>Cenário Personalizado</h3>
+                    <textarea id="custom-scenario-input" rows="4" placeholder="Descreva uma situação..."></textarea>
+                    <button id="start-custom-scenario-btn">Iniciar Cenário</button>
+                </div>
+            </section>
+            
+            <!-- Seção de Histórico -->
+            <section id="history-section" class="sidebar-section collapsible collapsed">
+                <h2 class="section-header">
+                    <div>
+                        <span class="header-icon">🕒</span>
+                        <span>Histórico</span>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="section-content">
+                    <ul id="history-list">
+                        <li><small>Nenhum diálogo no histórico.</small></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </aside>
+
+    <!-- O CONTAINER PRINCIPAL AGORA ENVOLVE APENAS A ÁREA DO CHAT -->
+    <div class="app-container">
+        <main class="chat-area">
+            
+            <!-- CABEÇALHO FIXO PARA A VISUALIZAÇÃO MOBILE -->
+            <header class="chat-header">
+                <button class="icon-btn" id="menu-toggle-btn">☰</button>
+                <h1>Odete's English Class</h1>
+            </header>
+            
+            <div class="chat-window" id="chat-window">
+                <div class="message system-message">
+                    <p>🎯 Selecione um cenário no menu para iniciar sua missão!</p>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <button class="icon-btn" id="mic-btn" title="Usar microfone">🎤</button>
+                <input type="text" id="text-input" placeholder="Digite sua mensagem...">
+                <button class="icon-btn" id="send-btn" title="Enviar mensagem">➤</button>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ===== ESTRUTURA DO MODAL DE FEEDBACK ===== -->
+    <div id="feedback-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Seu Feedback</h2>
+                <button id="translate-btn" class="translate-btn-hidden">Traduzir para Português</button>
+                <span class="modal-close" id="modal-close-btn">&times;</span>
+            </div>
+            <div class="modal-body" id="feedback-content">
+                <!-- Conteúdo do feedback -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- OVERLAY PARA ESCURECER O FUNDO QUANDO O MENU ESTIVER ABERTO -->
+    <div id="overlay" class="overlay-hidden"></div>
+
+    <!-- Scripts da Aplicação -->
+    <script src="configuration.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
