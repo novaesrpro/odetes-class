@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const aiResponse = await getAIResponse(null, [], apiKey, currentScenario, settings);
             conversationHistory.push({ role: 'assistant', content: aiResponse });
             displayMessage(aiResponse, 'ai');
-        } catch (error) { displayMessage(`Error: ${error.message}`, 'ai'); } finally { setLoadingState(false, true); }
+        } catch (error) { displayMessage(`Error: ${error.message}`, 'ai'); } finally { setLoadingState(false, true, false); }
     }
 
     async function handleSendMessage() {
@@ -234,7 +234,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateActiveScenario(el) { document.querySelectorAll('#suggested-scenarios-list li').forEach(li => li.classList.remove('active-scenario')); if (el) el.classList.add('active-scenario'); }
     function displayMessage(text, sender) { const el = document.createElement('div'); el.classList.add('message', `${sender}-message`); const p = document.createElement('p'); p.textContent = text; el.appendChild(p); chatWindow.appendChild(el); scrollToBottom(); }
     function scrollToBottom() { chatWindow.scrollTop = chatWindow.scrollHeight; }
-    function setLoadingState(isLoading, isInputEnabled = false) { textInput.disabled = isLoading || !isInputEnabled; sendBtn.disabled = isLoading || !isInputEnabled; if (isLoading) showTypingIndicator(); else { removeTypingIndicator(); if (isInputEnabled) textInput.focus(); } }
+    function setLoadingState(isLoading, isInputEnabled = false, shouldFocus = true) { // Parâmetro adicionado
+        textInput.disabled = isLoading || !isInputEnabled;
+        sendBtn.disabled = isLoading || !isInputEnabled;
+        if (isLoading) {
+            showTypingIndicator();
+        } else {
+            removeTypingIndicator();
+            if (isInputEnabled && shouldFocus) { // Condição modificada
+                textInput.focus();
+            }
+        }
+    }
     function showTypingIndicator() { if (!document.getElementById('typing-indicator')) { const el = document.createElement('div'); el.id = 'typing-indicator'; el.classList.add('message', 'ai-message'); el.innerHTML = '<p class="typing-dots"><span>.</span><span>.</span><span>.</span></p>'; chatWindow.appendChild(el); scrollToBottom(); } }
     function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
 
