@@ -16,7 +16,7 @@
         </div>
         
         <div class="sidebar-content">
-            <!-- Seção de Cenários (MOVIDA PARA CIMA) -->
+            <!-- Seção de Cenários -->
             <section id="scenario-section" class="sidebar-section collapsible">
                 <h2 class="section-header">
                     <div>
@@ -129,7 +129,7 @@
         </div>
     </div>
     
-    <!-- ===== NOVA ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
+    <!-- ===== ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
     <div id="api-key-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <h2>Odete's Class</h2><hr><br>
@@ -137,8 +137,6 @@
                 <h2>Primeira vez por aqui? Vamos conectar sua IA gratuita!</h2>
             </div>
             <div class="modal-body">
-                <!--<p class="modal-description">Siga os 3 passos para gerar uma chave de acesso gratuita em menos de um minuto!</p>-->
-                
                 <ol class="step-by-step-list">
                     <li>
                         <strong><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Acesse o site da Groq.com</a></strong> (ele é o provedor da sua IA)
@@ -155,6 +153,19 @@
                 <input type="password" id="modal-api-key-input" placeholder="Cole sua chave aqui (ex: gsk_...)">
                 <button id="save-api-key-btn">Salvar e Começar</button>
                 <p class="modal-info-text">Sua chave é salva com segurança no seu navegador.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ESTRUTURA DO MODAL DE HISTÓRICO (NOVO) ===== -->
+    <div id="history-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="history-modal-title">Histórico da Conversa</h2>
+                <span class="modal-close" id="history-modal-close-btn">&times;</span>
+            </div>
+            <div class="modal-body" id="history-modal-content">
+                <!-- As mensagens da conversa serão inseridas aqui pelo script.js -->
             </div>
         </div>
     </div>
