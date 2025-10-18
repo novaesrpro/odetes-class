@@ -212,31 +212,65 @@ button#change-api-key-btn:hover {
 }
 
 /* Estilos para o Modal da API Key */
-#api-key-modal .modal-content { max-width: 450px; }
-#api-key-modal .modal-description { margin-bottom: 16px; line-height: 1.6; color: var(--secondary-text); font-size: 0.95rem; }
-#api-key-modal label { color: var(--primary-text); }
+#api-key-modal .modal-content { max-width: 500px; /* Aumentado para melhor visualização */ }
+#api-key-modal .modal-description { margin-bottom: 24px; line-height: 1.6; color: var(--secondary-text); font-size: 0.95rem; text-align: center; }
+#api-key-modal label { color: var(--primary-text); margin-top: 24px; }
 #api-key-modal input[type="password"] { background-color: var(--bg-main); color: var(--primary-text); border-color: var(--border-color); margin-bottom: 16px; }
 #api-key-modal button { width: 100%; background-color: var(--accent-color); color: white; border: none; font-weight: 600; font-size: 1rem; padding: 14px; border-radius: 10px; cursor: pointer; transition: background-color 0.2s ease; }
 #api-key-modal button:hover { background-color: #0052cc; }
 #api-key-modal .modal-info-text { font-size: 0.8rem; text-align: center; margin-top: 12px; color: var(--secondary-text); }
 
-/* ESTILOS PARA O LINK NO MODAL (NOVO) */
-.modal-link-text {
-    text-align: center;
-    margin: -8px 0 16px 0;
-    font-size: 0.9rem;
+/* ===== NOVOS ESTILOS PARA O PASSO-A-PASSO NO MODAL ===== */
+.step-by-step-list {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: steps-counter;
+    margin-bottom: 16px;
 }
-.modal-link-text a {
+.step-by-step-list li {
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--secondary-text);
+}
+.step-by-step-list li:last-child {
+    margin-bottom: 0;
+}
+.step-by-step-list li::before {
+    content: counter(steps-counter);
+    counter-increment: steps-counter;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.step-by-step-list li strong {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-text);
+    margin-bottom: 4px;
+    font-size: 1rem;
+}
+.step-by-step-list li a {
     color: var(--accent-color);
     text-decoration: none;
     font-weight: 500;
-    transition: text-decoration 0.2s ease;
 }
-.modal-link-text a:hover {
+.step-by-step-list li a:hover {
     text-decoration: underline;
 }
-/* FIM DOS NOVOS ESTILOS */
-
+/* ===== FIM DOS NOVOS ESTILOS ===== */
 
 /* ===== MEDIA QUERY PARA DESKTOP ===== */
 @media (min-width: 800px) {

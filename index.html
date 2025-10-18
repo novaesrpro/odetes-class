@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odete's English Class</title>
+    <title>Odete's English Class v.03</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,6 +16,29 @@
         </div>
         
         <div class="sidebar-content">
+            <!-- Seção de Cenários (MOVIDA PARA CIMA) -->
+            <section id="scenario-section" class="sidebar-section collapsible">
+                <h2 class="section-header">
+                    <div>
+                        <span class="header-icon">💬</span>
+                        <span>Cenários</span>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="section-content">
+                    <h3>Sugeridos</h3>
+                    <ul id="suggested-scenarios-list">
+                        <li>Pedindo um café</li>
+                        <li>Check-in no hotel</li>
+                        <li>Comprando um ingresso de trem</li>
+                    </ul>
+
+                    <h3>Cenário Personalizado</h3>
+                    <textarea id="custom-scenario-input" rows="4" placeholder="Descreva uma situação..."></textarea>
+                    <button id="start-custom-scenario-btn">Iniciar Cenário</button>
+                </div>
+            </section>
+
             <!-- Seção de Configurações -->
             <section id="config-section" class="sidebar-section collapsible collapsed">
                 <h2 class="section-header">
@@ -47,29 +70,6 @@
 
                     <label>Conexão com a IA</label>
                     <button id="change-api-key-btn">Gerenciar Chave de API</button>
-                </div>
-            </section>
-
-            <!-- Seção de Cenários -->
-            <section id="scenario-section" class="sidebar-section collapsible">
-                <h2 class="section-header">
-                    <div>
-                        <span class="header-icon">💬</span>
-                        <span>Cenários</span>
-                    </div>
-                    <span class="toggle-icon">▼</span>
-                </h2>
-                <div class="section-content">
-                    <h3>Sugeridos</h3>
-                    <ul id="suggested-scenarios-list">
-                        <li>Pedindo um café</li>
-                        <li>Check-in no hotel</li>
-                        <li>Comprando um ingresso de trem</li>
-                    </ul>
-
-                    <h3>Cenário Personalizado</h3>
-                    <textarea id="custom-scenario-input" rows="4" placeholder="Descreva uma situação..."></textarea>
-                    <button id="start-custom-scenario-btn">Iniciar Cenário</button>
                 </div>
             </section>
             
@@ -129,25 +129,31 @@
         </div>
     </div>
     
-    <!-- ===== ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
+    <!-- ===== NOVA ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
     <div id="api-key-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Configurar Chave de API (Groq)</h2>
+                <h2>Primeira vez por aqui?<br>Vamos conectar sua IA gratuita!</h2>
             </div>
             <div class="modal-body">
-                <p class="modal-description">Para usar o aplicativo, você precisa de uma chave de API da Groq. É grátis para obter e usar.</p>
+                <!--<p class="modal-description">Siga os 3 passos para gerar uma chave de acesso gratuita em menos de um minuto!</p>-->
                 
-                <!-- LINK ADICIONADO ABAIXO -->
-                <p class="modal-link-text">
-                    <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Não tem uma chave? Obtenha uma aqui.</a>
-                </p>
-                <!-- FIM DO LINK ADICIONADO -->
-
-                <label for="modal-api-key-input">Sua Chave de API</label>
-                <input type="password" id="modal-api-key-input" placeholder="gsk_...">
+                <ol class="step-by-step-list">
+                    <li>
+                        <strong><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Clique aqui para acessar o site da Groq</a></strong> (ele é o provedor do seu modelo de IA)
+                    </li>
+                    <li>
+                        <strong>Faça login com sua conta do Google</strong> (ou crie uma conta gratuita da própria Groq)
+                    </li>
+                    <li>
+                        <strong>Crie sua chave em "Create API Key"</strong> (dê o nome que quiser para ela)
+                    </li>
+                </ol>
+                
+                <label for="modal-api-key-input">Agora é só copiar e colar o código da sua <strong>Chave de API</strong> aqui:</label>
+                <input type="password" id="modal-api-key-input" placeholder="Cole sua chave aqui (ex: gsk_...)">
                 <button id="save-api-key-btn">Salvar e Começar</button>
-                <p class="modal-info-text">Sua chave é salva apenas no seu navegador.</p>
+                <p class="modal-info-text">Sua chave é salva com segurança no seu navegador.</p>
             </div>
         </div>
     </div>
