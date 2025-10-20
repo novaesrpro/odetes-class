@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odete's English Class v.03</title>
+    <title>Odete's English Class v.09</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,15 @@
     <!-- O MENU LATERAL AGORA FICA FORA DO CONTAINER PRINCIPAL -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>Menu</h2>
+            <!-- ESTRUTURA PARA DESKTOP (escondida no mobile pelo CSS) -->
+            <h1>Odete's English Class</h1>
+            <button class="icon-btn" id="open-settings-btn-desktop" title="Configurações">⚙️</button>
+
+            <!-- ESTRUTURA PARA MOBILE (escondida no desktop pelo CSS) -->
+            <div class="sidebar-title-group">
+                <h2>Menu</h2>
+                <button class="icon-btn" id="open-settings-btn" title="Configurações">⚙️</button>
+            </div>
             <button class="icon-btn" id="close-menu-btn">&times;</button>
         </div>
         
@@ -28,48 +36,12 @@
                 <div class="section-content">
                     <h3>Sugeridos</h3>
                     <ul id="suggested-scenarios-list">
-                        <li>Pedindo um café</li>
-                        <li>Check-in no hotel</li>
-                        <li>Comprando um ingresso de trem</li>
+                        <!-- Esta lista será populada pelo script.js -->
                     </ul>
 
                     <h3>Cenário Personalizado</h3>
                     <textarea id="custom-scenario-input" rows="4" placeholder="Descreva uma situação..."></textarea>
                     <button id="start-custom-scenario-btn">Iniciar Cenário</button>
-                </div>
-            </section>
-
-            <!-- Seção de Configurações -->
-            <section id="config-section" class="sidebar-section collapsible collapsed">
-                <h2 class="section-header">
-                    <div>
-                        <span class="header-icon">⚙️</span>
-                        <span>Configurações</span>
-                    </div>
-                    <span class="toggle-icon">▼</span>
-                </h2>
-                <div class="section-content">
-                    <label for="language-select">Idioma</label>
-                    <select id="language-select" name="language">
-                        <option value="en-US">Inglês</option>
-                    </select>
-                    
-                    <label for="proficiency-select">Nível de Proficiência</label>
-                    <select id="proficiency-select" name="proficiency">
-                        <option value="basic">Básico</option>
-                        <option value="intermediate">Intermediário</option>
-                        <option value="advanced">Avançado</option>
-                    </select>
-
-                    <label for="correction-select">Nível de Correção</label>
-                    <select id="correction-select" name="correction">
-                        <option value="low">Baixo</option>
-                        <option value="medium">Médio</option>
-                        <option value="high">Alto</option>
-                    </select>
-
-                    <label>Conexão com a IA</label>
-                    <button id="change-api-key-btn">Gerenciar Chave de API</button>
                 </div>
             </section>
             
@@ -101,12 +73,10 @@
             </header>
             
             <div class="chat-window" id="chat-window">
-                <div class="message system-message">
-                    <p>🎯 Selecione um cenário no menu para iniciar sua missão!</p>
-                </div>
+                <!-- O conteúdo inicial será renderizado pelo script.js -->
             </div>
 
-            <div class="chat-input-area">
+            <div class="chat-input-area chat-input-hidden">
                 <button class="icon-btn" id="mic-btn" title="Usar microfone">🎤</button>
                 <input type="text" id="text-input" placeholder="Digite sua mensagem...">
                 <button class="icon-btn" id="send-btn" title="Enviar mensagem">➤</button>
@@ -115,21 +85,18 @@
         </main>
     </div>
 
-    <!-- ===== ESTRUTURA DO MODAL DE FEEDBACK ===== -->
+    <!-- ===== ESTRUTURA DOS MODAIS ===== -->
     <div id="feedback-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Seu Feedback</h2>
+                <h2>Your Feedback</h2>
                 <button id="translate-btn" class="translate-btn-hidden">Traduzir para Português</button>
                 <span class="modal-close" id="modal-close-btn">&times;</span>
             </div>
-            <div class="modal-body" id="feedback-content">
-                <!-- Conteúdo do feedback -->
-            </div>
+            <div class="modal-body" id="feedback-content"></div>
         </div>
     </div>
     
-    <!-- ===== ESTRUTURA DO MODAL DA CHAVE DE API ===== -->
     <div id="api-key-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <h2>Odete's Class</h2><hr><br>
@@ -138,17 +105,10 @@
             </div>
             <div class="modal-body">
                 <ol class="step-by-step-list">
-                    <li>
-                        <strong><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Acesse o site da Groq.com</a></strong> (ele é o provedor da sua IA)
-                    </li>
-                    <li>
-                        <strong>Faça login na Groq com sua conta do Google</strong> (ou crie uma conta gratuita da própria Groq)
-                    </li>
-                    <li>
-                        <strong>Crie sua chave secreta em "Create API Key"</strong> (dê o nome que quiser para ela)
-                    </li>
+                    <li><strong><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Acesse o site da Groq.com</a></strong> (ele é o provedor da sua IA)</li>
+                    <li><strong>Faça login na Groq com sua conta do Google</strong> (ou crie uma conta gratuita da própria Groq)</li>
+                    <li><strong>Crie sua chave secreta em "Create API Key"</strong> (dê o nome que quiser para ela)</li>
                 </ol>
-                
                 <label for="modal-api-key-input">Agora é só copiar e colar o código da sua <strong>Chave de API</strong> aqui:</label>
                 <input type="password" id="modal-api-key-input" placeholder="Cole sua chave aqui (ex: gsk_...)">
                 <button id="save-api-key-btn">Salvar e Começar</button>
@@ -157,15 +117,57 @@
         </div>
     </div>
 
-    <!-- ===== ESTRUTURA DO MODAL DE HISTÓRICO (NOVO) ===== -->
     <div id="history-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="history-modal-title">Histórico da Conversa</h2>
                 <span class="modal-close" id="history-modal-close-btn">&times;</span>
             </div>
-            <div class="modal-body" id="history-modal-content">
-                <!-- As mensagens da conversa serão inseridas aqui pelo script.js -->
+            <div class="modal-body" id="history-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="mission-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sua Missão 🎯</h2>
+                <span class="modal-close" id="mission-modal-close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="mission-goal-text">O objetivo da sua missão aparecerá aqui.</p>
+                <button id="start-mission-btn">Entendi a missão</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurações</h2>
+                <span class="modal-close" id="settings-modal-close-btn">&times;</span>
+            </div>
+            <div class="modal-body" id="settings-modal-body">
+                <label for="language-select">Idioma</label>
+                <select id="language-select" name="language">
+                    <option value="en-US">Inglês</option>
+                </select>
+                
+                <label for="proficiency-select">Nível de Proficiência</label>
+                <select id="proficiency-select" name="proficiency">
+                    <option value="basic">Básico</option>
+                    <option value="intermediate">Intermediário</option>
+                    <option value="advanced">Avançado</option>
+                </select>
+
+                <label for="correction-select">Nível de Correção</label>
+                <select id="correction-select" name="correction">
+                    <option value="low">Baixo</option>
+                    <option value="medium">Médio</option>
+                    <option value="high">Alto</option>
+                </select>
+
+                <label>Conexão com a IA</label>
+                <button id="change-api-key-btn">Gerenciar Chave de API</button>
             </div>
         </div>
     </div>
@@ -175,6 +177,7 @@
 
     <!-- Scripts da Aplicação -->
     <script src="configuration.js"></script>
+    <script src="scenarios.js"></script>
     <script src="script.js"></script>
 
 </body>

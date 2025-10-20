@@ -1,6 +1,5 @@
 /**
  * Obtém uma resposta da API da Groq para continuar o diálogo do cenário.
- * ... (a função getAIResponse permanece a mesma da etapa anterior) ...
  */
 async function getAIResponse(userMessage, history, apiKey, scenario, settings) {
     const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -20,11 +19,16 @@ async function getAIResponse(userMessage, history, apiKey, scenario, settings) {
 
 /**
  * Obtém um feedback detalhado sobre a performance do usuário.
- * ... (prompt atualizado para solicitar melhor formatação) ...
  */
-async function getFeedbackForConversation(history, apiKey) {
+// 1. Adicionar 'language' como parâmetro da função
+async function getFeedbackForConversation(history, apiKey, language) {
     const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    const systemPrompt = `You are an expert English language tutor. A student has just completed a role-playing conversation. Your task is to provide constructive, detailed, and encouraging feedback. Your response MUST be in English. Analyze ONLY the user's messages.
+    
+    // 2. Definir targetLanguage dentro da função, com base no parâmetro recebido
+    const languageMap = { "en-US": "English" };
+    const targetLanguage = languageMap[language] || "English";
+
+    const systemPrompt = `You are an expert English language tutor. A student has just completed a role-playing conversation. Your task is to provide constructive, detailed, and encouraging feedback. Your response MUST be in ${targetLanguage}. Analyze ONLY the user's messages.
 
     Please structure your feedback in three sections using Markdown:
     
@@ -50,20 +54,51 @@ async function getFeedbackForConversation(history, apiKey) {
 }
 
 /**
- * Traduz um texto para Português do Brasil. (NOVA FUNÇÃO)
- * @param {string} textToTranslate O texto a ser traduzido.
- * @param {string} apiKey A chave de API do usuário.
- * @returns {Promise<string>} O texto traduzido.
+ * Traduz um texto para Português do Brasil.
  */
-async function translateText(textToTranslate, apiKey) {
+// 1. Adicionar 'language' como parâmetro da função
+async function translateText(textToTranslate, apiKey, language) {
     const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    const systemPrompt = `You are an expert translator. Translate the following English text to Brazilian Portuguese. Do not add any commentary, notes, or explanations. Provide only the direct translation of the text.`;
+    
+    // 2. Definir targetLanguage dentro da função
+    const languageMap = { "en-US": "English" };
+    const targetLanguage = languageMap[language] || "English";
+
+    const systemPrompt = `You are an expert translator. Translate the following ${targetLanguage} text to Brazilian Portuguese. Do not add any commentary, notes, or explanations. Provide only the direct translation of the text.`;
     const messages = [{ role: 'system', content: systemPrompt }, { role: 'user', content: textToTranslate }];
     try {
-        const response = await fetch(API_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: messages, model: 'llama-3.3-70b-versatile' }) }); // Modelo mais rápido para tradução simples
+        const response = await fetch(API_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: messages, model: 'llama-3.3-70b-versatile' }) });
         if (!response.ok) { const errorData = await response.json(); throw new Error(`API Error: ${errorData.error.message}`); }
         const data = await response.json();
         if (data.choices && data.choices.length > 0) return data.choices[0].message.content;
         else throw new Error("The API did not return a valid translation.");
     } catch (error) { console.error("Error in translateText:", error); throw error; }
+}
+
+/**
+ * Gera um título curto para um objetivo de cenário personalizado.
+ */
+// 1. Adicionar 'language' como parâmetro da função
+async function getScenarioTitle(goalText, apiKey, language) {
+    const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+    // 2. Definir targetLanguage dentro da função
+    const languageMap = { "en-US": "English" };
+    const targetLanguage = languageMap[language] || "English";
+
+    const systemPrompt = `You are an expert in creating concise titles. Read the following text, which describes a goal for a role-playing scenario. Your task is to create a short, descriptive title in ${targetLanguage} for this scenario. The title should be a maximum of 5-7 words. Respond ONLY with the title itself, without any extra words, quotes, or explanations.`;
+    const messages = [{ role: 'system', content: systemPrompt }, { role: 'user', content: goalText }];
+    try {
+        const response = await fetch(API_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: messages, model: 'llama-3.3-70b-versatile' }) });
+        if (!response.ok) { const errorData = await response.json(); throw new Error(`API Error: ${errorData.error.message}`); }
+        const data = await response.json();
+        if (data.choices && data.choices.length > 0) {
+            return data.choices[0].message.content.trim().replace(/["']/g, "");
+        } else {
+            throw new Error("The API did not return a valid title.");
+        }
+    } catch (error) {
+        console.error("Error in getScenarioTitle:", error);
+        return "Custom Scenario";
+    }
 }
