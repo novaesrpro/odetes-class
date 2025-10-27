@@ -3,18 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odete's Class 17.3</title>
+    <title>Odete's Class 19</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- O CONTAINER PRINCIPAL AGORA ENVOLVE A BARRA DE CONTEXTO, ÁREA DE CONTEÚDO E O INPUT DO CHAT -->
+    <!-- O CONTAINER PRINCIPAL AGORA ENVOLVE O CABEÇALHO GLOBAL, ÁREA DE CONTEÚDO E O INPUT DO CHAT -->
     <div class="app-container">
 
-        <!-- NOVA BARRA DE CONTEXTO DO DIÁLOGO (Inicialmente oculta) -->
-        <div class="context-bar context-bar-hidden" id="context-bar">
-            <h2 id="context-bar-title"></h2> <!-- Título será preenchido via JS -->
-            <button id="exit-chat-btn" class="exit-chat-btn">Sair</button>
+        <!-- CABEÇALHO GLOBAL -->
+        <div class="context-bar" id="context-bar">
+            <!-- Indicadores de Status (Esquerda) -->
+            <div class="header-indicators">
+                <button class="icon-btn header-indicator-btn" id="lang-indicator-btn" title="Mudar Idioma">
+                    <!-- O emoji da bandeira será inserido aqui via JS, ex: 🇺🇸 -->
+                </button>
+                <button class="icon-btn header-indicator-btn" id="proficiency-indicator-btn" title="Mudar Nível de Conversa">
+                    <!-- As estrelas serão inseridas aqui via JS, ex: ★★☆ -->
+                </button>
+            </div>
+
+            <!-- Ações e Status (Direita) -->
+            <div class="header-actions">
+                <!-- NOVO: Placeholder para a Pontuação -->
+                <div id="score-indicator" class="score-indicator">
+                    <!-- A pontuação será inserida aqui via JS, ex: ⭐ 15 -->
+                </div>
+                <!-- Botão de Sair (Oculto por padrão) -->
+                <button id="exit-chat-btn" class="exit-chat-btn exit-chat-btn-hidden">Sair</button>
+            </div>
         </div>
 
         <main class="main-area">
@@ -115,11 +132,11 @@
                     <option value="en-US">Inglês</option>
                 </select>
                 
-                <label for="proficiency-select">Nível de Proficiência</label>
+                <label for="proficiency-select">Nível de Conversa</label>
                 <select id="proficiency-select" name="proficiency">
-                    <option value="basic">Básico</option>
-                    <option value="intermediate">Intermediário</option>
-                    <option value="advanced">Avançado</option>
+                    <option value="basic">Básico (Respostas Diretas)</option>
+                    <option value="intermediate">Intermediário (Conversa Natural)</option>
+                    <option value="advanced">Avançado (Respostas Detalhadas)</option>
                 </select>
 
                 <label>Conexão com a IA</label>
@@ -131,7 +148,6 @@
     <!-- NOVA BARRA DE NAVEGAÇÃO INFERIOR -->
     <nav class="bottom-nav-bar" id="bottom-nav-bar">
         <button class="icon-btn" id="nav-home-btn" title="Início">🏠</button>
-        <button class="icon-btn" id="nav-categories-btn" title="Categorias">📚</button>
         <button class="icon-btn" id="nav-custom-btn" title="Cenário Personalizado">✨</button>
         <button class="icon-btn" id="nav-history-btn" title="Histórico">🕒</button>
         <button class="icon-btn" id="nav-settings-btn" title="Configurações">⚙️</button>
@@ -140,7 +156,6 @@
     <!-- Scripts da Aplicação -->
     <script src="configuration.js"></script>
     <script src="scenarios.js"></script>
-    <script src="tips.js"></script>
     <script src="script.js"></script>
 
 </body>

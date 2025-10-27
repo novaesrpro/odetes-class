@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageSelect = document.getElementById('language-select');
     const bottomNavBar = document.getElementById('bottom-nav-bar');
     const navHomeBtn = document.getElementById('nav-home-btn');
-    const navCategoriesBtn = document.getElementById('nav-categories-btn');
     const navCustomBtn = document.getElementById('nav-custom-btn');
     const navHistoryBtn = document.getElementById('nav-history-btn');
     const navSettingsBtn = document.getElementById('nav-settings-btn');
@@ -36,9 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const micBtn = document.getElementById('mic-btn');
     const startTextMissionBtn = document.getElementById('start-text-mission-btn');
     const startVoiceMissionBtn = document.getElementById('start-voice-mission-btn');
+    
+    // Mapeamento do cabeçalho global e seus componentes
     const contextBar = document.getElementById('context-bar');
-    const contextBarTitle = document.getElementById('context-bar-title');
-    const exitChatBtn = document.getElementById('exit-chat-btn'); // Agora é um botão de "Voltar" genérico
+    const langIndicatorBtn = document.getElementById('lang-indicator-btn');
+    const proficiencyIndicatorBtn = document.getElementById('proficiency-indicator-btn');
+    const exitChatBtn = document.getElementById('exit-chat-btn');
+    const scoreIndicator = document.getElementById('score-indicator'); // NOVO: Mapeamento da pontuação
+
 
     // --- Variáveis de Estado e Constantes ---
     const AVATAR_AI_URL = 'https://cdn.icon-icons.com/icons2/1371/PNG/512/robot02_90810.png';
@@ -60,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let mediaRecorder; 
     let audioChunks = []; 
-    let contextBarBtnListener = null; // Listener genérico para o botão da barra de contexto
 
     // --- Funções de Inicialização da API de Voz ---
     function initializeSpeechAPI() {
@@ -87,11 +90,59 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('googleApiKey', googleKey); 
             localStorage.setItem('elevenLabsApiKey', elevenLabsKey);
             closeApiKeyModal(); 
-            renderHomePage();
+            initializeApp();
         } else { 
             alert("Por favor, insira as duas chaves de API para continuar."); 
         } 
     }
+    
+    // --- Funções de Gerenciamento de Configurações e Cabeçalho ---
+    function loadSettings() {
+        const savedLanguage = localStorage.getItem('language');
+        const savedProficiency = localStorage.getItem('proficiency');
+        if (savedLanguage) languageSelect.value = savedLanguage;
+        if (savedProficiency) proficiencySelect.value = savedProficiency;
+    }
+
+    function updateHeaderIndicators() {
+        const langMap = { "en-US": "🇺🇸" };
+        const currentLang = languageSelect.value;
+        langIndicatorBtn.innerHTML = langMap[currentLang] || '🌐';
+
+        const profMap = {
+            basic: '★<span class="star-off">★★</span>',
+            intermediate: '★★<span class="star-off">★</span>',
+            advanced: '★★★'
+        };
+        const currentProf = proficiencySelect.value;
+        proficiencyIndicatorBtn.innerHTML = profMap[currentProf] || '★★★';
+    }
+
+    // --- NOVO: Funções do Sistema de Pontuação ---
+    function getScore() {
+        return parseInt(localStorage.getItem('userScore') || '0', 10);
+    }
+
+    function saveScore(newScore) {
+        localStorage.setItem('userScore', newScore);
+    }
+
+    function addPointsForLevel(level) {
+        const pointsMap = {
+            basic: 1,
+            intermediate: 2,
+            advanced: 3
+        };
+        const pointsToAdd = pointsMap[level] || 0;
+        const currentScore = getScore();
+        const newScore = currentScore + pointsToAdd;
+        saveScore(newScore);
+    }
+    
+    function updateScoreDisplay() {
+        scoreIndicator.innerHTML = `🦉 ${getScore()}`;
+    }
+
 
     // --- Funções de Histórico ---
     function populateHistoryList(listElement) { const history = JSON.parse(localStorage.getItem('conversationHistory')) || []; listElement.innerHTML = ''; if (history.length === 0) { listElement.innerHTML = '<li><small>Nenhum diálogo no histórico.</small></li>'; return; } history.forEach((item, index) => { const li = document.createElement('li'); li.className = 'history-item'; const viewButton = document.createElement('div'); viewButton.className = 'history-item-view'; viewButton.innerHTML = `<span>${item.scenarioName}</span><small>${new Date(item.timestamp).toLocaleString()}</small>`; viewButton.dataset.index = index; const deleteButton = document.createElement('button'); deleteButton.className = 'history-item-delete'; deleteButton.innerHTML = '&times;'; deleteButton.title = 'Excluir este item'; deleteButton.dataset.index = index; li.appendChild(viewButton); li.appendChild(deleteButton); listElement.appendChild(li); }); }
@@ -100,13 +151,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     navHomeBtn.addEventListener('click', renderHomePage);
-    navCategoriesBtn.addEventListener('click', renderCategoriesPage);
     navCustomBtn.addEventListener('click', renderCustomScenarioPage);
     navHistoryBtn.addEventListener('click', renderHistoryPage);
     navSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
     sendBtn.addEventListener('click', handleSendMessage);
     textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } });
     micBtn.addEventListener('click', handleMicButtonClick);
+    exitChatBtn.addEventListener('click', handleExitChat);
+    
+    langIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
+    proficiencyIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
+
+    languageSelect.addEventListener('change', () => {
+        localStorage.setItem('language', languageSelect.value);
+        updateHeaderIndicators();
+    });
+    proficiencySelect.addEventListener('change', () => {
+        localStorage.setItem('proficiency', proficiencySelect.value);
+        updateHeaderIndicators();
+    });
 
     mainContentArea.addEventListener('click', async (e) => {
         const suggestionBtn = e.target.closest('#start-suggestion-btn');
@@ -159,7 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCategoryPage(categoryName);
             return;
         }
-        
+        const backBtn = e.target.closest('.back-to-home-btn');
+        if (backBtn) {
+            renderHomePage();
+            return;
+        }
         const customBtn = e.target.closest('#start-custom-scenario-btn');
         if (customBtn) {
             const customInput = document.getElementById('custom-scenario-input');
@@ -191,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return;
         }
-        
         const viewTarget = e.target.closest('.history-item-view');
         if (viewTarget) {
             showHistoryModal(viewTarget.dataset.index);
@@ -228,35 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         missionModal.classList.add('modal-hidden');
         initiateVoiceChat();
     });
-    
-    // --- Lógica da Home ---
-    function getRandomTip() {
-        const proficiency = proficiencySelect.value || 'basic';
-        const tipsForLevel = ODETES_TIPS[proficiency];
-        if (!tipsForLevel || tipsForLevel.length === 0) {
-            return "Practice makes perfect!";
-        }
-        const randomIndex = Math.floor(Math.random() * tipsForLevel.length);
-        return tipsForLevel[randomIndex];
-    }
-    
-    // --- Função Central de Gerenciamento da Barra de Contexto ---
-    function updateContextBar(title, backAction) {
-        contextBarTitle.textContent = title;
-
-        if (contextBarBtnListener) {
-            exitChatBtn.removeEventListener('click', contextBarBtnListener);
-        }
-
-        if (backAction) {
-            exitChatBtn.textContent = backAction === handleExitChat ? "Sair" : "Voltar";
-            exitChatBtn.classList.remove('back-btn-hidden');
-            contextBarBtnListener = backAction;
-            exitChatBtn.addEventListener('click', contextBarBtnListener);
-        } else {
-            exitChatBtn.classList.add('back-btn-hidden');
-        }
-    }
 
     // --- Funções de Renderização de "Páginas" ---
     function renderHomePage() {
@@ -265,128 +302,33 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentArea.className = 'main-content-area';
         chatInputArea.classList.add('chat-input-hidden');
         bottomNavBar.classList.remove('nav-hidden');
-        contextBar.classList.remove('context-bar-hidden');
-        updateContextBar("Odete's Class", null);
         
-        const lang = languageSelect.value;
-        const allScenarios = Object.entries(SCENARIOS).flatMap(([categoryName, scenarios]) =>
-            Object.entries(scenarios).map(([scenarioName, scenarioData]) => ({
-                ...scenarioData[lang],
-                categoryName: categoryName,
-                scenarioName: scenarioName
-            }))
-        ).filter(Boolean);
-        const suggestedScenario = allScenarios[Math.floor(Math.random() * allScenarios.length)];
-        const nextMissionHTML = `
-            <section class="home-section">
-                <h2>Sua Próxima Missão</h2>
-                <div class="suggestion-card">
-                    <h3>${suggestedScenario.name}</h3>
-                    <p>${suggestedScenario.goal}</p>
-                    <button id="start-suggestion-btn" class="primary-btn" data-category-name="${suggestedScenario.categoryName}" data-scenario-name="${suggestedScenario.scenarioName}">
-                        Começar a Praticar
-                    </button>
-                </div>
-            </section>
-        `;
+        // Lógica de visibilidade do cabeçalho
+        scoreIndicator.classList.remove('score-indicator-hidden');
+        exitChatBtn.classList.add('exit-chat-btn-hidden');
 
-        const tip = getRandomTip();
-        const odetesTipHTML = `
-            <section class="home-section">
-                <h2>Dica da Odete</h2>
-                <div class="odetes-tip-card">
-                    <span class="tip-icon">💡</span>
-                    <p class="tip-text">${tip}</p>
-                </div>
-            </section>
-        `;
-
-        mainContentArea.innerHTML = nextMissionHTML + odetesTipHTML;
+        renderHomePageContent();
     }
-
-    function renderCategoriesPage() {
-        updateActiveNavIcon('nav-categories-btn');
-        mainContentArea.innerHTML = '';
-        mainContentArea.className = 'main-content-area';
-        chatInputArea.classList.add('chat-input-hidden');
-        bottomNavBar.classList.remove('nav-hidden');
-        updateContextBar("Categorias", null);
-
-        const panelContainer = document.createElement('div');
-        panelContainer.className = 'scenario-panel';
-        Object.keys(SCENARIOS).forEach(categoryName => {
-            const categorySection = document.createElement('section');
-            categorySection.className = 'panel-category-section';
-
-            const categoryTitle = document.createElement('h2');
-            categoryTitle.className = 'panel-category-title';
-            categoryTitle.innerHTML = `
-                <span class="category-title-text">${categoryName}</span>
-                <span class="category-toggle-icon">▸</span>
-            `;
-            categorySection.appendChild(categoryTitle);
-
-            const collapsibleContent = document.createElement('div');
-            collapsibleContent.className = 'collapsible-content';
-
-            const cardsContainer = document.createElement('div');
-            cardsContainer.className = 'scenario-cards-container';
-            const scenariosToShow = Object.keys(SCENARIOS[categoryName]).slice(0, 4);
-            scenariosToShow.forEach(scenarioName => {
-                const card = document.createElement('button');
-                card.className = 'scenario-card';
-                card.textContent = scenarioName;
-                card.dataset.categoryName = categoryName;
-                card.dataset.scenarioName = scenarioName;
-                cardsContainer.appendChild(card);
-            });
-
-            const viewAllButton = document.createElement('button');
-            viewAllButton.className = 'view-all-btn';
-            viewAllButton.textContent = 'Ver todos →';
-            viewAllButton.dataset.categoryName = categoryName;
-
-            collapsibleContent.appendChild(cardsContainer);
-            collapsibleContent.appendChild(viewAllButton);
-            
-            categorySection.appendChild(collapsibleContent);
-            panelContainer.appendChild(categorySection);
-        });
-        mainContentArea.appendChild(panelContainer);
-    }
-    
-    function renderCategoryPage(categoryName) {
-        updateActiveNavIcon('nav-categories-btn');
-        mainContentArea.innerHTML = '';
-        mainContentArea.className = 'main-content-area category-page';
-        bottomNavBar.classList.remove('nav-hidden');
-        updateContextBar(categoryName, renderCategoriesPage);
-        
-        const cardsContainer = document.createElement('div');
-        cardsContainer.className = 'scenario-cards-container full-view';
-        Object.keys(SCENARIOS[categoryName]).forEach(scenarioName => {
-            const card = document.createElement('button');
-            card.className = 'scenario-card';
-            card.textContent = scenarioName;
-            card.dataset.categoryName = categoryName;
-            card.dataset.scenarioName = scenarioName;
-            cardsContainer.appendChild(card);
-        });
-        mainContentArea.appendChild(cardsContainer);
-    }
-    
     function renderCustomScenarioPage() {
         updateActiveNavIcon('nav-custom-btn');
         mainContentArea.innerHTML = '';
         mainContentArea.className = 'main-content-area custom-scenario-page';
         chatInputArea.classList.add('chat-input-hidden');
         bottomNavBar.classList.remove('nav-hidden');
-        updateContextBar("Cenário Personalizado", null);
 
+        // Lógica de visibilidade do cabeçalho
+        scoreIndicator.classList.remove('score-indicator-hidden');
+        exitChatBtn.classList.add('exit-chat-btn-hidden');
+        
         const customScenarioContainer = document.createElement('div');
         customScenarioContainer.className = 'custom-scenario-container';
-        // MODIFICADO: Título <h2> removido
-        customScenarioContainer.innerHTML = `<p>Descreva uma situação ou objetivo que você gostaria de praticar em inglês.</p><textarea id="custom-scenario-input" rows="6" placeholder="Ex: Pedir o reembolso de um produto com defeito em uma loja de eletrônicos..."></textarea><div id="custom-scenario-feedback" class="custom-scenario-feedback"></div><button id="start-custom-scenario-btn" class="primary-btn">Iniciar Cenário</button>`;
+        customScenarioContainer.innerHTML = `
+            <h2>Cenário Personalizado</h2>
+            <p>Descreva uma situação ou objetivo que você gostaria de praticar em inglês.</p>
+            <textarea id="custom-scenario-input" rows="6" placeholder="Ex: Pedir o reembolso de um produto com defeito em uma loja de eletrônicos..."></textarea>
+            <div id="custom-scenario-feedback" class="custom-scenario-feedback"></div>
+            <button id="start-custom-scenario-btn" class="primary-btn">Iniciar Cenário</button>
+        `;
         mainContentArea.appendChild(customScenarioContainer);
     }
     function showCustomScenarioError(message) { const feedbackArea = document.getElementById('custom-scenario-feedback'); if (feedbackArea) { feedbackArea.textContent = message; feedbackArea.style.display = 'block'; } }
@@ -398,26 +340,30 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentArea.className = 'main-content-area history-page';
         chatInputArea.classList.add('chat-input-hidden');
         bottomNavBar.classList.remove('nav-hidden');
-        updateContextBar("Histórico", null);
+        
+        // Lógica de visibilidade do cabeçalho
+        scoreIndicator.classList.remove('score-indicator-hidden');
+        exitChatBtn.classList.add('exit-chat-btn-hidden');
         
         const historyContainer = document.createElement('div');
         historyContainer.className = 'history-container';
-        // MODIFICADO: Título <h2> removido
-        historyContainer.innerHTML = ''; 
+        historyContainer.innerHTML = '<h2>Histórico de Diálogos</h2>';
         const list = document.createElement('ul');
         list.id = 'history-list';
         populateHistoryList(list);
         historyContainer.appendChild(list);
         mainContentArea.appendChild(historyContainer);
     }
-    
     function renderChatInterface() {
         mainContentArea.innerHTML = '';
         mainContentArea.className = 'main-content-area chat-window';
         chatInputArea.classList.remove('chat-input-hidden');
         updateActiveNavIcon(null);
         bottomNavBar.classList.add('nav-hidden');
-        updateContextBar(currentScenario.details.name, handleExitChat);
+        
+        // Lógica de visibilidade do cabeçalho
+        scoreIndicator.classList.add('score-indicator-hidden');
+        exitChatBtn.classList.remove('exit-chat-btn-hidden');
     }
 
     // --- Funções de Lógica Principal de Conversa ---
@@ -433,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sendBtn.style.display = 'flex';
 
         conversationHistory = [];
+        displayMessage(`Cenário: ${currentScenario.details.name}`, 'system');
         displayMessage(`🎯 Seu Objetivo: ${currentScenario.details.goal}`, 'system');
         setProcessingState(true);
         try {
@@ -483,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- LÓGICA DE VOZ HÍBRIDA ---
+
     function setupVoiceUI() {
         chatInputArea.classList.remove('chat-input-hidden');
         textInput.style.display = 'block';
@@ -498,6 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderChatInterface();
         setupVoiceUI();
         conversationHistory = [];
+        displayMessage(`Cenário: ${currentScenario.details.name}`, 'system');
         displayMessage(`🎯 Seu Objetivo: ${currentScenario.details.goal}`, 'system');
         setProcessingState(true);
         try {
@@ -553,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- LÓGICA DE ESTADO DA INTERFACE ---
+
     function setProcessingState(isProcessing) {
         if (isProcessing) {
             showTypingIndicator();
@@ -582,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- SISTEMA DE VOZ (TTS e STT) ---
+
     async function speakText(text) {
         text = text.replace(/[*_#]/g, '').replace(/<eng>|<\/eng>/g, '');
         if (!text || text.trim() === '') {
@@ -777,6 +728,10 @@ document.addEventListener('DOMContentLoaded', () => {
         micBtn.disabled = true;
         updateMicButtonState('default');
         
+        // NOVO: Adiciona pontos e atualiza o display
+        addPointsForLevel(proficiencySelect.value);
+        updateScoreDisplay();
+
         const apiKey = getGoogleApiKey();
         let finalScenarioName = currentScenario.details.name;
         if (currentScenario.details.name === "Cenário Personalizado") {
@@ -788,7 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayCompletionScreen() { const completionContainer = document.createElement('div'); completionContainer.className = 'completion-container'; completionContainer.innerHTML = `<div class="message system-message"><p>🎉 Parabéns! Você completou o cenário.</p></div>`; const actionsContainer = document.createElement('div'); actionsContainer.className = 'completion-actions'; actionsContainer.innerHTML = `<button id="feedback-btn">Ver Feedback</button><button id="next-challenge-btn">Próximo Desafio</button>`; actionsContainer.querySelector('#feedback-btn').addEventListener('click', handleGetFeedback); actionsContainer.querySelector('#next-challenge-btn').addEventListener('click', startNextChallenge); completionContainer.appendChild(actionsContainer); mainContentArea.appendChild(completionContainer); scrollToBottom(); }
-    function startNextChallenge() { renderHomePage(); }
+    function startNextChallenge() { const allScenarios = Object.values(SCENARIOS).flatMap(category => Object.values(category).map(scenario => scenario[languageSelect.value])); const currentGoal = currentScenario.details.goal; const availableScenarios = allScenarios.filter(s => s.goal !== currentGoal); if (availableScenarios.length > 0) { const randomIndex = Math.floor(Math.random() * availableScenarios.length); startNewConversation(availableScenarios[randomIndex]); } else { renderHomePage(); alert("Você praticou todos os cenários disponíveis!"); } }
     async function handleGetFeedback() { feedbackModal.classList.remove('modal-hidden'); feedbackContent.innerHTML = '<p>Analisando sua conversa, por favor, aguarde...</p>'; translateBtn.classList.add('translate-btn-hidden'); try { const apiKey = getGoogleApiKey(); if (!apiKey) throw new Error("Chave de API do Google não encontrada."); const settings = { language: languageSelect.value, proficiency: proficiencySelect.value }; originalFeedback = await getFeedbackForConversation(conversationHistory, apiKey, languageSelect.value, settings, currentInteractionMode); const history = JSON.parse(localStorage.getItem('conversationHistory')) || []; if (history.length > 0 && !history[0].feedback) { history[0].feedback = originalFeedback; localStorage.setItem('conversationHistory', JSON.stringify(history)); } displayFormattedFeedback(originalFeedback); translateBtn.classList.remove('translate-btn-hidden'); isTranslated = false; translatedFeedback = ''; translateBtn.textContent = 'Traduzir para Português'; } catch (error) { feedbackContent.innerHTML = `<p>Erro ao gerar feedback: ${error.message}</p>`; } }
     
     async function handleTranslateFeedback() { 
@@ -837,7 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- FUNÇÕES UTILITÁRIAS ---
     function updateActiveNavIcon(activeBtnId) {
-        [navHomeBtn, navCategoriesBtn, navCustomBtn, navHistoryBtn, navSettingsBtn].forEach(btn => {
+        [navHomeBtn, navCustomBtn, navHistoryBtn, navSettingsBtn].forEach(btn => {
             if (btn.id === activeBtnId) {
                 btn.classList.add('active-nav-icon');
             } else {
@@ -846,10 +801,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    function renderHomePageContent() {
+        mainContentArea.innerHTML = '';
+
+        const title = document.createElement('h1');
+        title.className = 'main-page-title';
+        title.textContent = "Odete's English Class";
+        mainContentArea.appendChild(title);
+
+        const lang = languageSelect.value;
+        const allScenarios = Object.entries(SCENARIOS).flatMap(([categoryName, scenarios]) =>
+            Object.entries(scenarios).map(([scenarioName, scenarioData]) => ({
+                ...scenarioData[lang],
+                categoryName: categoryName,
+                scenarioName: scenarioName
+            }))
+        ).filter(Boolean);
+
+        const suggestedScenario = allScenarios[Math.floor(Math.random() * allScenarios.length)];
+
+        const suggestionSection = document.createElement('section');
+        suggestionSection.className = 'suggestion-section';
+        suggestionSection.innerHTML = `
+            <div class="suggestion-card">
+                <h3>${suggestedScenario.name}</h3>
+                <p>${suggestedScenario.goal}</p>
+                <button id="start-suggestion-btn" class="primary-btn" data-category-name="${suggestedScenario.categoryName}" data-scenario-name="${suggestedScenario.scenarioName}">
+                    Começar a Praticar
+                </button>
+            </div>
+        `;
+        mainContentArea.appendChild(suggestionSection);
+
+        const panelContainer = document.createElement('div');
+        panelContainer.className = 'scenario-panel';
+        Object.keys(SCENARIOS).forEach(categoryName => {
+            const categorySection = document.createElement('section');
+            categorySection.className = 'panel-category-section';
+
+            const categoryTitle = document.createElement('h2');
+            categoryTitle.className = 'panel-category-title';
+            categoryTitle.innerHTML = `
+                <span class="category-title-text">${categoryName}</span>
+                <span class="category-toggle-icon">▸</span>
+            `;
+            categorySection.appendChild(categoryTitle);
+
+            const collapsibleContent = document.createElement('div');
+            collapsibleContent.className = 'collapsible-content';
+
+            const cardsContainer = document.createElement('div');
+            cardsContainer.className = 'scenario-cards-container';
+            const scenariosToShow = Object.keys(SCENARIOS[categoryName]).slice(0, 4);
+            scenariosToShow.forEach(scenarioName => {
+                const card = document.createElement('button');
+                card.className = 'scenario-card';
+                card.textContent = scenarioName;
+                card.dataset.categoryName = categoryName;
+                card.dataset.scenarioName = scenarioName;
+                cardsContainer.appendChild(card);
+            });
+
+            const viewAllButton = document.createElement('button');
+            viewAllButton.className = 'view-all-btn';
+            viewAllButton.textContent = 'Ver todos →';
+            viewAllButton.dataset.categoryName = categoryName;
+
+            collapsibleContent.appendChild(cardsContainer);
+            collapsibleContent.appendChild(viewAllButton);
+            
+            categorySection.appendChild(collapsibleContent);
+            panelContainer.appendChild(categorySection);
+        });
+        mainContentArea.appendChild(panelContainer);
+    }
+    
+    function renderCategoryPage(categoryName) { mainContentArea.innerHTML = ''; mainContentArea.className = 'main-content-area category-page'; const categoryContainer = document.createElement('div'); categoryContainer.className = 'category-page-container'; const header = document.createElement('div'); header.className = 'category-page-header'; const backButton = document.createElement('button'); backButton.className = 'back-to-home-btn'; backButton.innerHTML = '&#8592; Voltar'; const title = document.createElement('h2'); title.textContent = categoryName; header.appendChild(backButton); header.appendChild(title); const cardsContainer = document.createElement('div'); cardsContainer.className = 'scenario-cards-container full-view'; Object.keys(SCENARIOS[categoryName]).forEach(scenarioName => { const card = document.createElement('button'); card.className = 'scenario-card'; card.textContent = scenarioName; card.dataset.categoryName = categoryName; card.dataset.scenarioName = scenarioName; cardsContainer.appendChild(card); }); categoryContainer.appendChild(header); categoryContainer.appendChild(cardsContainer); mainContentArea.appendChild(categoryContainer); }
     function scrollToBottom() { mainContentArea.scrollTop = mainContentArea.scrollHeight; }
     function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
-    function initializeApp() { if (!getGoogleApiKey() || !getElevenLabsApiKey()) { openApiKeyModal(true); } else { renderHomePage(); } initializeSpeechAPI(); }
+    
+    function initializeApp() { 
+        loadSettings();
+        updateHeaderIndicators();
+        updateScoreDisplay(); // NOVO: Mostra a pontuação ao iniciar
+        if (!getGoogleApiKey() || !getElevenLabsApiKey()) { 
+            openApiKeyModal(true); 
+        } else { 
+            renderHomePage(); 
+        } 
+        initializeSpeechAPI(); 
+    }
+    
     initializeApp();
+
     function displayMessage(text, sender) { if (sender === 'ai') { removeTypingIndicator(); } if (sender === 'system') { const systemEl = document.createElement('div'); systemEl.className = 'message system-message'; systemEl.innerHTML = `<p>${text}</p>`; mainContentArea.appendChild(systemEl); } else { const wrapper = document.createElement('div'); wrapper.className = 'message-wrapper'; const avatar = document.createElement('img'); avatar.className = 'avatar'; const messageBubble = document.createElement('div'); messageBubble.className = 'message'; messageBubble.innerHTML = `<p>${text}</p>`; if (sender === 'user') { wrapper.classList.add('user-message-wrapper'); avatar.src = AVATAR_USER_URL; avatar.alt = 'User Avatar'; messageBubble.classList.add('user-message'); } else { wrapper.classList.add('ai-message-wrapper'); avatar.src = AVATAR_AI_URL; avatar.alt = 'AI Avatar'; messageBubble.classList.add('ai-message'); } wrapper.appendChild(avatar); wrapper.appendChild(messageBubble); mainContentArea.appendChild(wrapper); } scrollToBottom(); }
     function showTypingIndicator() { if (document.getElementById('typing-indicator')) return; const wrapper = document.createElement('div'); wrapper.id = 'typing-indicator'; wrapper.className = 'message-wrapper ai-message-wrapper'; const avatar = document.createElement('img'); avatar.className = 'avatar'; avatar.src = AVATAR_AI_URL; avatar.alt = 'AI Avatar'; const messageBubble = document.createElement('div'); messageBubble.className = 'message ai-message'; messageBubble.innerHTML = '<p class="typing-dots"><span>.</span><span>.</span><span>.</span></p>'; wrapper.appendChild(avatar); wrapper.appendChild(messageBubble); mainContentArea.appendChild(wrapper); }
 
