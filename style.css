@@ -107,9 +107,9 @@ html, body {
     width: auto;
     height: 36px;
     padding: 0 10px;
-    transition: background-color 0.2s ease; /* Adiciona uma transição suave */
-    border: 1px solid red;
+    transition: background-color 0.2s ease;
 }
+
 .header-indicator-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
@@ -125,7 +125,7 @@ html, body {
 }
 
 .star-off {
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* Cinza para estrelas inativas */
 }
 
 .header-actions {
@@ -165,7 +165,7 @@ html, body {
     background-color: var(--text-secondary);
     color: var(--bg-header);
 }
-.exit-chat-btn-hidden {
+.exit-chat-btn-hidden, .back-btn-hidden {
     display: none;
 }
 
@@ -421,7 +421,6 @@ html, body {
 .category-page-header {
     display: flex;
     align-items: center;
-    position: relative;
     margin-bottom: 24px;
     justify-content: center;
 }
@@ -431,25 +430,7 @@ html, body {
     color: var(--text-primary);
     text-align: center;
 }
-.back-to-home-btn {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 6px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-.back-to-home-btn:hover {
-    background-color: var(--hover-light);
-    border-color: var(--text-secondary);
-}
+/* Estilo .back-to-home-btn removido pois o botão foi movido para o cabeçalho */
 
 
 /* ===== ESTILOS DO HISTÓRICO ===== */

@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const langIndicatorBtn = document.getElementById('lang-indicator-btn');
     const proficiencyIndicatorBtn = document.getElementById('proficiency-indicator-btn');
     const exitChatBtn = document.getElementById('exit-chat-btn');
-    const scoreIndicator = document.getElementById('score-indicator'); // NOVO: Mapeamento da pontuação
+    const scoreIndicator = document.getElementById('score-indicator');
+    const headerBackBtn = document.getElementById('header-back-btn'); // NOVO: Mapeamento do botão Voltar do cabeçalho
 
 
     // --- Variáveis de Estado e Constantes ---
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         proficiencyIndicatorBtn.innerHTML = profMap[currentProf] || '★★★';
     }
 
-    // --- NOVO: Funções do Sistema de Pontuação ---
+    // --- Funções do Sistema de Pontuação ---
     function getScore() {
         return parseInt(localStorage.getItem('userScore') || '0', 10);
     }
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } });
     micBtn.addEventListener('click', handleMicButtonClick);
     exitChatBtn.addEventListener('click', handleExitChat);
+    headerBackBtn.addEventListener('click', renderHomePage); // NOVO: Listener para o botão Voltar do cabeçalho
     
     langIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
     proficiencyIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
@@ -222,11 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCategoryPage(categoryName);
             return;
         }
-        const backBtn = e.target.closest('.back-to-home-btn');
-        if (backBtn) {
-            renderHomePage();
-            return;
-        }
+
+        // REMOVIDO: O listener do botão .back-to-home-btn que ficava dentro do conteúdo.
+
         const customBtn = e.target.closest('#start-custom-scenario-btn');
         if (customBtn) {
             const customInput = document.getElementById('custom-scenario-input');
@@ -306,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lógica de visibilidade do cabeçalho
         scoreIndicator.classList.remove('score-indicator-hidden');
         exitChatBtn.classList.add('exit-chat-btn-hidden');
+        headerBackBtn.classList.add('back-btn-hidden');
 
         renderHomePageContent();
     }
@@ -319,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lógica de visibilidade do cabeçalho
         scoreIndicator.classList.remove('score-indicator-hidden');
         exitChatBtn.classList.add('exit-chat-btn-hidden');
+        headerBackBtn.classList.add('back-btn-hidden');
         
         const customScenarioContainer = document.createElement('div');
         customScenarioContainer.className = 'custom-scenario-container';
@@ -344,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lógica de visibilidade do cabeçalho
         scoreIndicator.classList.remove('score-indicator-hidden');
         exitChatBtn.classList.add('exit-chat-btn-hidden');
+        headerBackBtn.classList.add('back-btn-hidden');
         
         const historyContainer = document.createElement('div');
         historyContainer.className = 'history-container';
@@ -364,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lógica de visibilidade do cabeçalho
         scoreIndicator.classList.add('score-indicator-hidden');
         exitChatBtn.classList.remove('exit-chat-btn-hidden');
+        headerBackBtn.classList.add('back-btn-hidden');
     }
 
     // --- Funções de Lógica Principal de Conversa ---
@@ -407,8 +411,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleExitChat() {
-        if (!confirm('Tem certeza de que deseja sair? O progresso deste diálogo não será salvo.')) {
-            return;
+        if (isConversationActive) {
+            if (!confirm('Tem certeza de que deseja sair? O progresso deste diálogo não será salvo.')) {
+                return;
+            }
         }
 
         isConversationActive = false;
@@ -728,7 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
         micBtn.disabled = true;
         updateMicButtonState('default');
         
-        // NOVO: Adiciona pontos e atualiza o display
         addPointsForLevel(proficiencySelect.value);
         updateScoreDisplay();
 
@@ -742,7 +747,26 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('conversationHistory', JSON.stringify(history));
     }
 
-    function displayCompletionScreen() { const completionContainer = document.createElement('div'); completionContainer.className = 'completion-container'; completionContainer.innerHTML = `<div class="message system-message"><p>🎉 Parabéns! Você completou o cenário.</p></div>`; const actionsContainer = document.createElement('div'); actionsContainer.className = 'completion-actions'; actionsContainer.innerHTML = `<button id="feedback-btn">Ver Feedback</button><button id="next-challenge-btn">Próximo Desafio</button>`; actionsContainer.querySelector('#feedback-btn').addEventListener('click', handleGetFeedback); actionsContainer.querySelector('#next-challenge-btn').addEventListener('click', startNextChallenge); completionContainer.appendChild(actionsContainer); mainContentArea.appendChild(completionContainer); scrollToBottom(); }
+    function displayCompletionScreen() {
+        const completionContainer = document.createElement('div');
+        completionContainer.className = 'completion-container';
+        completionContainer.innerHTML = `<div class="message system-message"><p>🎉 Parabéns! Você completou o cenário.</p></div>`;
+        
+        const actionsContainer = document.createElement('div');
+        actionsContainer.className = 'completion-actions';
+        actionsContainer.innerHTML = `<button id="feedback-btn">Ver Feedback</button><button id="next-challenge-btn">Próximo Desafio</button>`;
+        
+        actionsContainer.querySelector('#feedback-btn').addEventListener('click', handleGetFeedback);
+        actionsContainer.querySelector('#next-challenge-btn').addEventListener('click', startNextChallenge);
+        
+        completionContainer.appendChild(actionsContainer);
+        mainContentArea.appendChild(completionContainer);
+        scrollToBottom();
+
+        if (exitChatBtn) {
+            exitChatBtn.textContent = 'Voltar ao Início';
+        }
+    }
     function startNextChallenge() { const allScenarios = Object.values(SCENARIOS).flatMap(category => Object.values(category).map(scenario => scenario[languageSelect.value])); const currentGoal = currentScenario.details.goal; const availableScenarios = allScenarios.filter(s => s.goal !== currentGoal); if (availableScenarios.length > 0) { const randomIndex = Math.floor(Math.random() * availableScenarios.length); startNewConversation(availableScenarios[randomIndex]); } else { renderHomePage(); alert("Você praticou todos os cenários disponíveis!"); } }
     async function handleGetFeedback() { feedbackModal.classList.remove('modal-hidden'); feedbackContent.innerHTML = '<p>Analisando sua conversa, por favor, aguarde...</p>'; translateBtn.classList.add('translate-btn-hidden'); try { const apiKey = getGoogleApiKey(); if (!apiKey) throw new Error("Chave de API do Google não encontrada."); const settings = { language: languageSelect.value, proficiency: proficiencySelect.value }; originalFeedback = await getFeedbackForConversation(conversationHistory, apiKey, languageSelect.value, settings, currentInteractionMode); const history = JSON.parse(localStorage.getItem('conversationHistory')) || []; if (history.length > 0 && !history[0].feedback) { history[0].feedback = originalFeedback; localStorage.setItem('conversationHistory', JSON.stringify(history)); } displayFormattedFeedback(originalFeedback); translateBtn.classList.remove('translate-btn-hidden'); isTranslated = false; translatedFeedback = ''; translateBtn.textContent = 'Traduzir para Português'; } catch (error) { feedbackContent.innerHTML = `<p>Erro ao gerar feedback: ${error.message}</p>`; } }
     
@@ -876,14 +900,49 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentArea.appendChild(panelContainer);
     }
     
-    function renderCategoryPage(categoryName) { mainContentArea.innerHTML = ''; mainContentArea.className = 'main-content-area category-page'; const categoryContainer = document.createElement('div'); categoryContainer.className = 'category-page-container'; const header = document.createElement('div'); header.className = 'category-page-header'; const backButton = document.createElement('button'); backButton.className = 'back-to-home-btn'; backButton.innerHTML = '&#8592; Voltar'; const title = document.createElement('h2'); title.textContent = categoryName; header.appendChild(backButton); header.appendChild(title); const cardsContainer = document.createElement('div'); cardsContainer.className = 'scenario-cards-container full-view'; Object.keys(SCENARIOS[categoryName]).forEach(scenarioName => { const card = document.createElement('button'); card.className = 'scenario-card'; card.textContent = scenarioName; card.dataset.categoryName = categoryName; card.dataset.scenarioName = scenarioName; cardsContainer.appendChild(card); }); categoryContainer.appendChild(header); categoryContainer.appendChild(cardsContainer); mainContentArea.appendChild(categoryContainer); }
+    // ATUALIZADO: Função renderCategoryPage
+    function renderCategoryPage(categoryName) {
+        // Lógica de visibilidade do cabeçalho
+        scoreIndicator.classList.add('score-indicator-hidden');
+        exitChatBtn.classList.add('exit-chat-btn-hidden');
+        headerBackBtn.classList.remove('back-btn-hidden');
+        
+        mainContentArea.innerHTML = ''; 
+        mainContentArea.className = 'main-content-area category-page'; 
+        
+        const categoryContainer = document.createElement('div'); 
+        categoryContainer.className = 'category-page-container'; 
+        
+        const header = document.createElement('div'); 
+        header.className = 'category-page-header'; 
+        // O botão voltar foi removido daqui
+        const title = document.createElement('h2'); 
+        title.textContent = categoryName; 
+        header.appendChild(title); 
+        
+        const cardsContainer = document.createElement('div'); 
+        cardsContainer.className = 'scenario-cards-container full-view'; 
+        Object.keys(SCENARIOS[categoryName]).forEach(scenarioName => { 
+            const card = document.createElement('button'); 
+            card.className = 'scenario-card'; 
+            card.textContent = scenarioName; 
+            card.dataset.categoryName = categoryName; 
+            card.dataset.scenarioName = scenarioName; 
+            cardsContainer.appendChild(card); 
+        }); 
+        
+        categoryContainer.appendChild(header); 
+        categoryContainer.appendChild(cardsContainer); 
+        mainContentArea.appendChild(categoryContainer); 
+    }
+
     function scrollToBottom() { mainContentArea.scrollTop = mainContentArea.scrollHeight; }
     function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
     
     function initializeApp() { 
         loadSettings();
         updateHeaderIndicators();
-        updateScoreDisplay(); // NOVO: Mostra a pontuação ao iniciar
+        updateScoreDisplay();
         if (!getGoogleApiKey() || !getElevenLabsApiKey()) { 
             openApiKeyModal(true); 
         } else { 
