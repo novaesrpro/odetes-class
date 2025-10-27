@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const proficiencyIndicatorBtn = document.getElementById('proficiency-indicator-btn');
     const exitChatBtn = document.getElementById('exit-chat-btn');
     const scoreIndicator = document.getElementById('score-indicator');
-    const headerBackBtn = document.getElementById('header-back-btn'); // NOVO: Mapeamento do botão Voltar do cabeçalho
+    const headerBackBtn = document.getElementById('header-back-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn'); // NOVO: Mapeamento do botão de tela cheia
 
 
     // --- Variáveis de Estado e Constantes ---
@@ -159,10 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } });
     micBtn.addEventListener('click', handleMicButtonClick);
     exitChatBtn.addEventListener('click', handleExitChat);
-    headerBackBtn.addEventListener('click', renderHomePage); // NOVO: Listener para o botão Voltar do cabeçalho
+    headerBackBtn.addEventListener('click', renderHomePage);
     
     langIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
     proficiencyIndicatorBtn.addEventListener('click', () => settingsModal.classList.remove('modal-hidden'));
+
+    // NOVO: Listeners para tela cheia
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
 
     languageSelect.addEventListener('change', () => {
         localStorage.setItem('language', languageSelect.value);
@@ -224,8 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCategoryPage(categoryName);
             return;
         }
-
-        // REMOVIDO: O listener do botão .back-to-home-btn que ficava dentro do conteúdo.
 
         const customBtn = e.target.closest('#start-custom-scenario-btn');
         if (customBtn) {
@@ -813,6 +816,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayFormattedFeedback(text) { feedbackContent.innerHTML = formatFeedbackText(text); }
+
+    // --- Funções de Tela Cheia ---
+    function isFullscreen() {
+        return !!document.fullscreenElement;
+    }
+
+    function toggleFullscreen() {
+        if (!isFullscreen()) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Não foi possível entrar em modo de tela cheia: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    function updateFullscreenIcon() {
+        if (isFullscreen()) {
+            fullscreenBtn.innerHTML = '<span>↘↙</span>'; // Ícone de recolher
+            fullscreenBtn.title = "Sair da Tela Cheia";
+        } else {
+            fullscreenBtn.innerHTML = '<span>⛶</span>'; // Ícone de expandir
+            fullscreenBtn.title = "Alternar Tela Cheia";
+        }
+    }
     
     // --- FUNÇÕES UTILITÁRIAS ---
     function updateActiveNavIcon(activeBtnId) {
