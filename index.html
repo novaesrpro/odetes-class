@@ -3,79 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odete's English Class v.09</title>
+    <title>Odete's English Class v.12</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- O MENU LATERAL AGORA FICA FORA DO CONTAINER PRINCIPAL -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <!-- ESTRUTURA PARA DESKTOP (escondida no mobile pelo CSS) -->
-            <h1>Odete's English Class</h1>
-            <button class="icon-btn" id="open-settings-btn-desktop" title="Configurações">⚙️</button>
+    <!-- BARRA SUPERIOR ATUALIZADA: CONTEXTO E AÇÕES SECUNDÁRIAS -->
+    <header class="top-nav-bar" id="top-nav-bar">
+        <button class="icon-btn" id="profile-btn" title="Perfil e Histórico">👤</button>
+        <h1 id="top-bar-title">Início</h1>
+        <button class="icon-btn" id="custom-scenario-btn" title="Cenário Personalizado">✨</button>
+    </header>
 
-            <!-- ESTRUTURA PARA MOBILE (escondida no desktop pelo CSS) -->
-            <div class="sidebar-title-group">
-                <h2>Menu</h2>
-                <button class="icon-btn" id="open-settings-btn" title="Configurações">⚙️</button>
-            </div>
-            <button class="icon-btn" id="close-menu-btn">&times;</button>
-        </div>
-        
-        <div class="sidebar-content">
-            <!-- Seção de Cenários -->
-            <section id="scenario-section" class="sidebar-section collapsible">
-                <h2 class="section-header">
-                    <div>
-                        <span class="header-icon">💬</span>
-                        <span>Cenários</span>
-                    </div>
-                    <span class="toggle-icon">▼</span>
-                </h2>
-                <div class="section-content">
-                    <h3>Sugeridos</h3>
-                    <ul id="suggested-scenarios-list">
-                        <!-- Esta lista será populada pelo script.js -->
-                    </ul>
-
-                    <h3>Cenário Personalizado</h3>
-                    <textarea id="custom-scenario-input" rows="4" placeholder="Descreva uma situação..."></textarea>
-                    <button id="start-custom-scenario-btn">Iniciar Cenário</button>
-                </div>
-            </section>
-            
-            <!-- Seção de Histórico -->
-            <section id="history-section" class="sidebar-section collapsible collapsed">
-                <h2 class="section-header">
-                    <div>
-                        <span class="header-icon">🕒</span>
-                        <span>Histórico</span>
-                    </div>
-                    <span class="toggle-icon">▼</span>
-                </h2>
-                <div class="section-content">
-                    <ul id="history-list">
-                        <li><small>Nenhum diálogo no histórico.</small></li>
-                    </ul>
-                </div>
-            </section>
-        </div>
-    </aside>
-
-    <!-- O CONTAINER PRINCIPAL AGORA ENVOLVE APENAS A ÁREA DO CHAT -->
+    <!-- O CONTAINER PRINCIPAL AGORA TEM ESPAÇO PARA A BARRA INFERIOR -->
     <div class="app-container">
-        <main class="chat-area">
+        <main class="main-area">
             
-            <header class="chat-header">
-                <button class="icon-btn" id="menu-toggle-btn">☰</button>
-                <h1>Odete's English Class</h1>
-            </header>
-            
-            <div class="chat-window" id="chat-window">
-                <!-- O conteúdo inicial será renderizado pelo script.js -->
+            <!-- ÁREA DE CONTEÚDO DINÂMICA (Exibirá a Home, Explorar, Chat, etc.) -->
+            <div class="main-content-area" id="main-content-area">
+                <!-- O conteúdo será renderizado pelo script.js -->
             </div>
 
+            <!-- A ÁREA DE INPUT DO CHAT FICA FORA DA ÁREA DE SCROLL -->
             <div class="chat-input-area chat-input-hidden">
                 <button class="icon-btn" id="mic-btn" title="Usar microfone">🎤</button>
                 <input type="text" id="text-input" placeholder="Digite sua mensagem...">
@@ -85,7 +34,20 @@
         </main>
     </div>
 
-    <!-- ===== ESTRUTURA DOS MODAIS ===== -->
+    <!-- NOVA BARRA DE ABAS INFERIOR: NAVEGAÇÃO PRINCIPAL -->
+    <nav class="bottom-nav-bar" id="bottom-nav-bar">
+        <button class="bottom-nav-btn active" id="new-nav-home-btn" title="Início">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Início</span>
+        </button>
+        <button class="bottom-nav-btn" id="new-nav-explore-btn" title="Explorar Cenários">
+            <span class="nav-icon">🧭</span>
+            <span class="nav-text">Explorar</span>
+        </button>
+    </nav>
+
+
+    <!-- ===== ESTRUTURA DOS MODAIS (Inalterada) ===== -->
     <div id="feedback-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -101,18 +63,27 @@
         <div class="modal-content">
             <h2>Odete's Class</h2><hr><br>
             <div class="modal-header">
-                <h2>Primeira vez por aqui? Vamos conectar sua IA gratuita!</h2>
+                <h2>Conecte suas IAs (Chat e Voz)</h2>
             </div>
             <div class="modal-body">
+                <p style="text-align: left; margin-bottom: 24px;">Para o aplicativo funcionar, você precisa de duas chaves de API gratuitas. Siga os passos abaixo (você só precisa fazer isso uma vez):</p>
                 <ol class="step-by-step-list">
-                    <li><strong><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Acesse o site da Groq.com</a></strong> (ele é o provedor da sua IA)</li>
-                    <li><strong>Faça login na Groq com sua conta do Google</strong> (ou crie uma conta gratuita da própria Groq)</li>
-                    <li><strong>Crie sua chave secreta em "Create API Key"</strong> (dê o nome que quiser para ela)</li>
+                    <li><strong><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Crie sua chave do Google AI Studio</a></strong>
+                        Faça login com sua conta Google, clique em "Create API key" e copie o código. Essa chave cuidará da inteligência da conversa.
+                    </li>
+                    <li><strong><a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer">Crie sua chave da ElevenLabs</a></strong>
+                        Crie uma conta (pode usar o login do Google), clique no ícone do seu perfil (canto superior direito) e em "Profile Settings". A chave estará lá para você copiar. Ela cuidará da voz de alta qualidade.
+                    </li>
                 </ol>
-                <label for="modal-api-key-input">Agora é só copiar e colar o código da sua <strong>Chave de API</strong> aqui:</label>
-                <input type="password" id="modal-api-key-input" placeholder="Cole sua chave aqui (ex: gsk_...)">
+                
+                <label for="modal-google-api-key-input">1. Chave de API do Google AI Studio (para o Chat)</label>
+                <input type="password" id="modal-google-api-key-input" placeholder="Cole sua chave do Google aqui (ex: AIza...)">
+                
+                <label for="modal-elevenlabs-api-key-input">2. Chave de API da ElevenLabs (para a Voz)</label>
+                <input type="password" id="modal-elevenlabs-api-key-input" placeholder="Cole sua chave da ElevenLabs aqui">
+
                 <button id="save-api-key-btn">Salvar e Começar</button>
-                <p class="modal-info-text">Sua chave é salva com segurança no seu navegador.</p>
+                <p class="modal-info-text">Suas chaves são salvas com segurança apenas no seu navegador.</p>
             </div>
         </div>
     </div>
@@ -135,7 +106,12 @@
             </div>
             <div class="modal-body">
                 <p id="mission-goal-text">O objetivo da sua missão aparecerá aqui.</p>
-                <button id="start-mission-btn">Entendi a missão</button>
+                <br>
+                <p style="text-align: center; font-weight: 500; margin-bottom: 20px;">Como você quer praticar?</p>
+                <div class="mission-choice-container">
+                    <button id="start-text-mission-btn">Por Texto</button>
+                    <button id="start-voice-mission-btn">Por Voz</button>
+                </div>
             </div>
         </div>
     </div>
@@ -159,21 +135,11 @@
                     <option value="advanced">Avançado</option>
                 </select>
 
-                <label for="correction-select">Nível de Correção</label>
-                <select id="correction-select" name="correction">
-                    <option value="low">Baixo</option>
-                    <option value="medium">Médio</option>
-                    <option value="high">Alto</option>
-                </select>
-
                 <label>Conexão com a IA</label>
-                <button id="change-api-key-btn">Gerenciar Chave de API</button>
+                <button id="change-api-key-btn">Gerenciar Chaves de API</button>
             </div>
         </div>
     </div>
-
-    <!-- OVERLAY PARA ESCURECER O FUNDO QUANDO O MENU ESTIVER ABERTO -->
-    <div id="overlay" class="overlay-hidden"></div>
 
     <!-- Scripts da Aplicação -->
     <script src="configuration.js"></script>
