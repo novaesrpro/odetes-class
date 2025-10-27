@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odete's English Class v.12</title>
+    <title>Odete's Class 17.3</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR ATUALIZADA: CONTEXTO E AÇÕES SECUNDÁRIAS -->
-    <header class="top-nav-bar" id="top-nav-bar">
-        <button class="icon-btn" id="profile-btn" title="Perfil e Histórico">👤</button>
-        <h1 id="top-bar-title">Início</h1>
-        <button class="icon-btn" id="custom-scenario-btn" title="Cenário Personalizado">✨</button>
-    </header>
-
-    <!-- O CONTAINER PRINCIPAL AGORA TEM ESPAÇO PARA A BARRA INFERIOR -->
+    <!-- O CONTAINER PRINCIPAL AGORA ENVOLVE A BARRA DE CONTEXTO, ÁREA DE CONTEÚDO E O INPUT DO CHAT -->
     <div class="app-container">
+
+        <!-- NOVA BARRA DE CONTEXTO DO DIÁLOGO (Inicialmente oculta) -->
+        <div class="context-bar context-bar-hidden" id="context-bar">
+            <h2 id="context-bar-title"></h2> <!-- Título será preenchido via JS -->
+            <button id="exit-chat-btn" class="exit-chat-btn">Sair</button>
+        </div>
+
         <main class="main-area">
             
-            <!-- ÁREA DE CONTEÚDO DINÂMICA (Exibirá a Home, Explorar, Chat, etc.) -->
+            <!-- ÁREA DE CONTEÚDO DINÂMICA (Exibirá a Home, Histórico, Chat, etc.) -->
             <div class="main-content-area" id="main-content-area">
                 <!-- O conteúdo será renderizado pelo script.js -->
             </div>
@@ -33,19 +33,6 @@
 
         </main>
     </div>
-
-    <!-- NOVA BARRA DE ABAS INFERIOR: NAVEGAÇÃO PRINCIPAL -->
-    <nav class="bottom-nav-bar" id="bottom-nav-bar">
-        <button class="bottom-nav-btn active" id="new-nav-home-btn" title="Início">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-text">Início</span>
-        </button>
-        <button class="bottom-nav-btn" id="new-nav-explore-btn" title="Explorar Cenários">
-            <span class="nav-icon">🧭</span>
-            <span class="nav-text">Explorar</span>
-        </button>
-    </nav>
-
 
     <!-- ===== ESTRUTURA DOS MODAIS (Inalterada) ===== -->
     <div id="feedback-modal" class="modal-overlay modal-hidden">
@@ -141,9 +128,19 @@
         </div>
     </div>
 
+    <!-- NOVA BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav-bar" id="bottom-nav-bar">
+        <button class="icon-btn" id="nav-home-btn" title="Início">🏠</button>
+        <button class="icon-btn" id="nav-categories-btn" title="Categorias">📚</button>
+        <button class="icon-btn" id="nav-custom-btn" title="Cenário Personalizado">✨</button>
+        <button class="icon-btn" id="nav-history-btn" title="Histórico">🕒</button>
+        <button class="icon-btn" id="nav-settings-btn" title="Configurações">⚙️</button>
+    </nav>
+
     <!-- Scripts da Aplicação -->
     <script src="configuration.js"></script>
     <script src="scenarios.js"></script>
+    <script src="tips.js"></script>
     <script src="script.js"></script>
 
 </body>
