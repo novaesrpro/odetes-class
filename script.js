@@ -855,6 +855,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // SUBSTITUA A FUNÇÃO 'renderHomePageContent' INTEIRA POR ESTA:
+    // SUBSTITUA A FUNÇÃO 'renderHomePageContent' INTEIRA POR ESTA NOVA VERSÃO:
     function renderHomePageContent() {
         mainContentArea.innerHTML = '';
 
@@ -872,20 +874,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }))
         ).filter(Boolean);
 
-        const suggestedScenario = allScenarios[Math.floor(Math.random() * allScenarios.length)];
-
         const suggestionSection = document.createElement('section');
         suggestionSection.className = 'suggestion-section';
+        // MUDANÇA AQUI: Removemos o botão de atualizar e envolvemos a imagem e o título em um novo 'div' clicável.
         suggestionSection.innerHTML = `
             <div class="suggestion-card">
-                <h3>${suggestedScenario.name}</h3>
-                <p>${suggestedScenario.goal}</p>
-                <button id="start-suggestion-btn" class="primary-btn" data-category-name="${suggestedScenario.categoryName}" data-scenario-name="${suggestedScenario.scenarioName}">
+                <div id="new-suggestion-trigger" class="suggestion-header" title="Clique para gerar uma nova sugestão">
+                    <img src="assets/odete.png" alt="Mascote Odete" class="suggestion-avatar">
+                    <h3 id="suggestion-title"></h3>
+                </div>
+                <button id="start-suggestion-btn" class="primary-btn">
                     Começar a Praticar
                 </button>
             </div>
         `;
         mainContentArea.appendChild(suggestionSection);
+
+        const renderNewSuggestion = () => {
+            const suggestedScenario = allScenarios[Math.floor(Math.random() * allScenarios.length)];
+            const suggestionTitleEl = document.getElementById('suggestion-title');
+            const startSuggestionBtn = document.getElementById('start-suggestion-btn');
+
+            if (suggestionTitleEl && startSuggestionBtn) {
+                suggestionTitleEl.textContent = suggestedScenario.name;
+                startSuggestionBtn.dataset.categoryName = suggestedScenario.categoryName;
+                startSuggestionBtn.dataset.scenarioName = suggestedScenario.scenarioName;
+            }
+        };
+
+        renderNewSuggestion();
+
+        // MUDANÇA AQUI: O listener agora está no 'div' que envolve a imagem e o título.
+        document.getElementById('new-suggestion-trigger').addEventListener('click', renderNewSuggestion);
 
         const panelContainer = document.createElement('div');
         panelContainer.className = 'scenario-panel';

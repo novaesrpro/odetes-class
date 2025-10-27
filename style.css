@@ -598,3 +598,48 @@ html, body {
     padding-left: 32px;
     padding-right: 32px;
 }
+
+/* ======================================== */
+/* ===== ESTILOS PARA O NOVO SUGGESTION CARD ===== */
+/* ======================================== */
+
+/* Centraliza o conteúdo do card de sugestão */
+.suggestion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Garante que o parágrafo original (que exibe o objetivo) não apareça */
+.suggestion-card p {
+    display: none;
+}
+
+/* Estiliza a imagem da Odete */
+.suggestion-avatar {
+    width: 100%;
+    max-width: 180px;
+    margin-bottom: 12px;
+    user-select: none;
+}
+
+/* NOVO: Estiliza a área clicável que envolve a imagem e o título */
+.suggestion-header {
+    cursor: pointer; /* A dica visual mais importante! */
+    padding: 10px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+    margin-bottom: 20px;
+}
+
+/* NOVO: Efeito sutil ao passar o mouse para indicar interatividade */
+.suggestion-header:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Ajusta a margem do título */
+.suggestion-card h3 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+}
